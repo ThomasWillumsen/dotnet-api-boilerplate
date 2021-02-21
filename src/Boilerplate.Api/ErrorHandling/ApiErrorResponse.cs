@@ -7,18 +7,18 @@ namespace Boilerplate.Api.ErrorHandling
     /// </summary>
     public class ApiErrorResponse
     {
-        public ApiErrorResponse(string message, string errorCode, ModelValidationError[] validationErrors = null)
+        public ApiErrorResponse(int errorCode, string errorMessage, ModelValidationError[] validationErrors = null)
         {
-            Message = message;
             ErrorCode = errorCode;
+            ErrorMessage = errorMessage;
             ValidationErrors = validationErrors ?? new ModelValidationError[] { };
         }
 
         [Required]
-        public string Message { get; set; }
+        public int ErrorCode { get; set; }
 
         [Required]
-        public string ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
 
         /// <summary>
         /// will contain validation errors if any

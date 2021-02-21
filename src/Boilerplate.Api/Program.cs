@@ -45,13 +45,17 @@ namespace Boilerplate.Api
             await dbContext.Examples.AddRangeAsync(
                 new ExampleEntity[]{
                     new ExampleEntity{
-                        Name = "test1"
+                        Name = "test1",
+                        Type = TypeEnum.A
+
                     },
                     new ExampleEntity{
-                        Name = "test2"
+                        Name = "test2",
+                        Type = TypeEnum.B
                     },
                     new ExampleEntity{
-                        Name = "test3"
+                        Name = "test3",
+                        Type = TypeEnum.C
                     }
                 }
             );

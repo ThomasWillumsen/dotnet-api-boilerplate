@@ -9,11 +9,10 @@ using System.IO;
 using Boilerplate.Api.ErrorHandling;
 using Microsoft.Extensions.Hosting;
 using Boilerplate.Settings;
-using Boilerplate.Core.BLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using MediatR;
 
 namespace Boilerplate.Api
 {
@@ -22,32 +21,26 @@ namespace Boilerplate.Api
     /// </summary>
     public class Startup
     {
-
-        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
+
         }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<Appsettings>(Configuration);
-            services.AddTransient<IExampleLogic, ExampleLogic>();
             services.AddDbContext<AppDbContext>(opts =>
             {
                 opts.UseSqlServer(Configuration.GetConnectionString("DbConnection"), b =>
                   b.MigrationsAssembly("Boilerplate.Core"));
             });
             services.AddScoped<IAppDbContext, AppDbContext>();
+            services.AddMediatR(typeof(Boilerplate.Core.Database.AppDbContext).Assembly); // use any type from Boilerplate.Core for this to work.
 
             services.AddControllers()
-                .AddNewtonsoftJson(opt =>
-                {
-                    opt.SerializerSettings.Converters.Add(new StringEnumConverter());
-                    opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                })
-                // handle modelstate validation errors
                 .ConfigureApiBehaviorOptions();
 
             // SWAGGER
@@ -73,11 +66,6 @@ namespace Boilerplate.Api
                     }
                 };
 
-#pragma warning disable 612, 618
-                // this is marked as obsolete but still seems to be necessary when we are using JsonStringEnumConverter
-                c.DescribeAllEnumsAsStrings();
-#pragma warning restore 612, 618
-
                 c.AddSecurityDefinition("Bearer", securitySchema);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -102,13 +90,18 @@ namespace Boilerplate.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Example V1 API");
+                    c.RoutePrefix = "";
+                });
             }
             else
             {
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseCors(builder => builder
@@ -116,18 +109,14 @@ namespace Boilerplate.Api
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
                 });
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Example V1 API");
-                c.RoutePrefix = "";
-            });
+
         }
     }
 }

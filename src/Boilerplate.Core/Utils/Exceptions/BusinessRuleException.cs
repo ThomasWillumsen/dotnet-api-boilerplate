@@ -8,13 +8,13 @@ namespace Boilerplate.Core.Utils.Exceptions
     /// </summary>
     public class BusinessRuleException : Exception
     {
-        public BusinessRuleException(string errorCode, string reasonText)
+        public BusinessRuleException(int errorCode, string errorMessage)
         {
             ErrorCode = errorCode;
-            ReasonText = reasonText;
+            ErrorMessage = errorMessage;
         }
 
-        public string ErrorCode { get; set; }
-        public string ReasonText { get; set; }
+        public int ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

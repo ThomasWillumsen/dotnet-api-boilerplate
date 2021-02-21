@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Boilerplate.Core.Database.Entities;
 
 namespace Boilerplate.Api.Models.Request
 {
@@ -9,5 +10,15 @@ namespace Boilerplate.Api.Models.Request
         /// </summary>
         [Required]
         public string Name { get; set; }
+        public TypeEnum Type { get; set; }
+
+        public ExampleEntity MapToEntity()
+        {
+            return new ExampleEntity
+            {
+                Name = Name,
+                Type = Type
+            };
+        }
     }
 }

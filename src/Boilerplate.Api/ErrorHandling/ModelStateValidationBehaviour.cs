@@ -1,10 +1,11 @@
+using Boilerplate.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Net.Mime;
+using System.Text.Json;
 
 namespace Boilerplate.Api.ErrorHandling
 {
@@ -13,14 +14,17 @@ namespace Boilerplate.Api.ErrorHandling
     /// </summary>
     public static class ModelStateValidationBehaviour
     {
+        /// <summary>
+        /// handle modelstate validation errors
+        /// </summary>
         public static IMvcBuilder ConfigureApiBehaviorOptions(this IMvcBuilder builder) =>
             builder.ConfigureApiBehaviorOptions(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
                 {
                     var errorResponse = new ApiErrorResponse(
-                        ApiErrorsConstants.MODEL_VALIDATION_ERROR,
-                        nameof(ApiErrorsConstants.MODEL_VALIDATION_ERROR),
+                        ErrorCodes.VALIDATION.Code,
+                        ErrorCodes.VALIDATION.Message,
                         context.ModelState.Keys
                             .SelectMany(key => context.ModelState[key].Errors
                                 .Select(x => new ModelValidationError(key, x.ErrorMessage)))
@@ -30,7 +34,7 @@ namespace Boilerplate.Api.ErrorHandling
                     result.ContentTypes.Add(MediaTypeNames.Application.Json);
 
                     var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
-                    logger.LogWarning("ModelStateValidationError {errorResponse}", JsonConvert.SerializeObject(errorResponse));
+                    logger.LogWarning("ModelStateValidationError {errorResponse}", JsonSerializer.Serialize(errorResponse));
 
                     return result;
                 };

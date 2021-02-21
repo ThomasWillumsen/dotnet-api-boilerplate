@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using Boilerplate.Core.Utils.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
+using Boilerplate.Core.Utils;
 
 namespace Boilerplate.Api.ErrorHandling
 {
@@ -15,18 +15,20 @@ namespace Boilerplate.Api.ErrorHandling
     /// </summary>
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate next;
+        private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
-            this.next = next;
+            _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
             try
             {
-                await next(httpContext);
+                await _next(httpContext);
             }
             catch (Exception e)
             {
@@ -34,42 +36,45 @@ namespace Boilerplate.Api.ErrorHandling
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            ApiErrorResponse errorResponse = null;
+            var httpStatusCode = HttpStatusCode.InternalServerError;
+            var errorCode = ErrorCodes.INTERNAL.Code;
+            var errorMessage = ErrorCodes.INTERNAL.Message;
 
-            if (exception is BusinessRuleException)
+            if (exception is BusinessRuleException brEx)
             {
-                var e = (BusinessRuleException)exception;
-                errorResponse = new ApiErrorResponse(
-                    e.ReasonText,
-                    e.ErrorCode
-                );
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                httpStatusCode = HttpStatusCode.UnprocessableEntity;
+                errorCode = brEx.ErrorCode;
+                errorMessage = brEx.ErrorMessage;
             }
-            else if (exception is KeyNotFoundException)
+            else if (exception is KeyNotFoundException knfEx)
             {
-                var e = (KeyNotFoundException)exception;
-                errorResponse = new ApiErrorResponse(
-                    e.Message,
-                    nameof(ApiErrorsConstants.NOT_FOUND)
-                );
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                httpStatusCode = HttpStatusCode.NotFound;
+                errorCode = ErrorCodes.NOTFOUND.Code;
+                errorMessage = ErrorCodes.NOTFOUND.Message;
             }
-            else
+            else if (exception is ConflictException cEx)
             {
-                errorResponse = new ApiErrorResponse(
-                    ApiErrorsConstants.INTERNAL_SERVER_ERROR,
-                    nameof(ApiErrorsConstants.INTERNAL_SERVER_ERROR)
-                );
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                httpStatusCode = HttpStatusCode.Conflict;
+                errorCode = cEx.ErrorCode;
+                errorMessage = cEx.Message;
+            }
+            else if (exception is BadFormatException bfEx)
+            {
+                httpStatusCode = HttpStatusCode.BadRequest;
+                errorCode = bfEx.ErrorCode;
+                errorMessage = bfEx.Message;
             }
 
-            var logger = context.RequestServices.GetRequiredService<ILogger<Startup>>();
-            logger.LogWarning("ExceptionMiddleware {errorResponse}", JsonConvert.SerializeObject(errorResponse));
+            var errorResponse = new ApiErrorResponse(errorCode, errorMessage);
+            var serializedResponse = JsonSerializer.Serialize(errorResponse);
+
+            _logger.LogWarning("ExceptionMiddleware {errorResponse}", serializedResponse);
 
             context.Response.ContentType = "application/json";
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(errorResponse));
+            context.Response.StatusCode = (int)httpStatusCode;
+            return context.Response.WriteAsync(serializedResponse, context.RequestAborted);
         }
     }
 }

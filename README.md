@@ -14,14 +14,14 @@ Hosted at:
 
 **Highlights:**
 
-- It's a .Net Core 3.1 app written in C#
+- It's a .Net 5 app written in C#
 - The API is documented using Swagger UI at `/swagger/index.html`. Clients can make use of Swagger Codegen.
 - The project administers an SQL Server database using Entity Framework and the code-first principle with migrations.
 - The solution is divided into two separate projects; the API project responsible for the interface of the application and http communication with clients, and the Core project which holds business logic and communication with external resources.
 
 ### Prerequisites
 
-- .Net Core SDK 3.1
+- .Net SDK 5.0.1
 
 ## Getting Started
 
@@ -71,7 +71,7 @@ We're using Xunit and Moq as mocking framework.
 The general strategy for testing is the following:
 
 - Unit test all business logic
-- Unit test all database integrations with in-memory database
+- Integration test all database integrations with in-memory database
 - Mock/Stub external services. No integrations with external services are tested.
 - Endpoint test all endpoints in the API with HTTP requests using WebApplicationFactory.
 

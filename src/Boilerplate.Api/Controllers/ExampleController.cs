@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Boilerplate.Api.Models.Response;
-using Boilerplate.Core.BLL;
 using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using Boilerplate.Api.Models.Request;
 using Boilerplate.Api.ErrorHandling;
+using MediatR;
+using Boilerplate.Core.Queries;
+using System.Collections.Generic;
+using Boilerplate.Core.Commands;
 
 namespace Boilerplate.Api.Controllers
 {
@@ -19,11 +22,26 @@ namespace Boilerplate.Api.Controllers
     [ApiController]
     public class ExamplesController : ControllerBase
     {
-        private readonly IExampleLogic _exampleLogic;
+        private readonly IMediator _mediator;
 
-        public ExamplesController(IExampleLogic exampleLogic)
+        public ExamplesController(IMediator mediator)
         {
-            this._exampleLogic = exampleLogic;
+            _mediator = mediator;
+        }
+
+
+        /// <summary>
+        /// Get examples
+        /// </summary>
+        /// <remarks>
+        /// This is where you fetch examples blabla...
+        /// </remarks>
+        [HttpGet("{id}", Name = nameof(GetExample))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<ActionResult<ExampleResponse>> GetExample([FromRoute] int id)
+        {
+            var example = await _mediator.Send(new GetExampleById.Query(id));
+            return Ok(new ExampleResponse(example));
         }
 
         /// <summary>
@@ -34,10 +52,10 @@ namespace Boilerplate.Api.Controllers
         /// </remarks>
         [HttpGet(Name = nameof(GetExamples))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<ExampleResponse>> GetExamples()
+        public async Task<ActionResult<IEnumerable<ExampleResponse>>> GetExamples()
         {
-            var examples = await _exampleLogic.GetExamples();
-            return Ok(examples.Select(x => new ExampleResponse(x)).ToArray());
+            var examples = await _mediator.Send(new GetExamples.Query());
+            return Ok(examples.Select(x => new ExampleResponse(x)));
         }
 
         /// <summary>
@@ -51,7 +69,7 @@ namespace Boilerplate.Api.Controllers
         [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<ExampleResponse>> CreateExample([FromBody] CreateExampleRequest body)
         {
-            var example = await _exampleLogic.CreateExample(body.Name);
+            var example = await _mediator.Send(new CreateExample.Command(body.MapToEntity()));
             return Created("", new ExampleResponse(example));
         }
     }

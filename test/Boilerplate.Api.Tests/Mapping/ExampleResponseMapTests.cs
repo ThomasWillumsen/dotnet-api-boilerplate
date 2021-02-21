@@ -1,4 +1,5 @@
 using System;
+using Boilerplate.Api.Models.Request;
 using Boilerplate.Api.Models.Response;
 using Boilerplate.Core.Database.Entities;
 using Xunit;
@@ -28,6 +29,25 @@ namespace Boilerplate.Api.Tests.Mapping
             // Assert
             Assert.Equal(example.Id, responseModel.Id);
             Assert.Equal(example.Name, responseModel.Name);
+            Assert.Equal(example.Type, responseModel.Type);
+        }
+
+        [Fact]
+        public void ExampleRequest_MapCorrectlyToEntityModel()
+        {
+            // Arrange
+            var example = new CreateExampleRequest()
+            {
+                Name = "test1",
+                Type = TypeEnum.B
+            };
+
+            // Act
+            var entityModel = example.MapToEntity();
+
+            // Assert
+            Assert.Equal(example.Name, entityModel.Name);
+            Assert.Equal(example.Type, entityModel.Type);
         }
     }
 }
