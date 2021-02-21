@@ -67,7 +67,7 @@ dotnet run --project ./src/Boilerplate.Api/
 
 ## Tests
 
-We're using Xunit and Moq as mocking framework.
+We're using Xunit and NSubstitute.
 The general strategy for testing is the following:
 
 - Unit test all business logic
