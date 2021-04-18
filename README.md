@@ -4,7 +4,7 @@ Everything in this repo is meant as a boilerplate to copy when starting a new AP
 
 ## About this project
 
-This is a boilerplate for an API.
+This is a boilerplate for a REST API.
 
 Hosted at:
 
@@ -14,10 +14,12 @@ Hosted at:
 
 **Highlights:**
 
-- .Net 5
+- .NET 5
 - CQRS architecture and mediator pattern
 - The API is documented using Swagger UI at `/ui/swagger`.
-- The project administers an SQL Server database using Entity Framework and the code-first principle with migrations.
+- An SQL Server database is administered using Entity Framework and the code-first principle with migrations.
+- SendGrid integration for sending emails
+- The project is also setup to host a SPA alongside the API.
 
 ### Prerequisites
 
@@ -25,19 +27,20 @@ Hosted at:
 
 ## Getting Started
 
-### Environment variables
-Please make sure that you have set the following environment variables when running the project locally.
-Using VS Code, a launch.json file can have a configuration containing an env object as such:
-
+### Configuration
+Configurations are contained within the appsettings.json file.
+Depending on the `ASPNETCORE_ENVIRONMENT` environment variable, an additional appsettings.{env}.json file will be read, which contains additional environment-specific configuration.
+These files should never contain secrets as they will be committed to github.
+Instead, set secret values as environment variables when running the project.
+Using VS Code, a gitignored launch.json file can have a configuration containing an env object as such:
 ```
 "env": {
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "ConnectionStrings:DbConnection": ""
+    "ConnectionStrings:DbConnection": "{myConnectionString}",
+    "SendGrid:ApiKey": "{myApiKey}";
+    "Authorization:JwtKey": "{myJwtKey}"
 }
 ```
-
-Depending on the `ASPNETCORE_ENVIRONMENT` variable, an additional appsettings.{env}.json file will be read, which contains additional environment-specific configuration.
-Connectionstrings and other secret stuff should not be contained within appsettings.json and commited to github.
 
 ## Entity Framework
 Migrations are applied when the application starts and should generally not be applied manually using the command line.
