@@ -43,24 +43,6 @@ namespace Boilerplate.Api.Domain.Services
             await SendEmail(dto);
         }
 
-        public async Task SendContactEmail(string fromEmail, string fullName, string comment)
-        {
-            var dto = new SendGridMailDto(
-                templateId: _sendGridSettings.ContactTemplateId,
-                templateData: new
-                {
-                    fullName = fullName,
-                    email = fromEmail,
-                    comment = comment
-                },
-                from: new EmailAddress(_sendGridSettings.SendFromEmail, fullName),
-                to: new EmailAddress(_sendGridSettings.ContactMailToEmail, _sendGridSettings.ContactMailToName),
-                replyTo: new EmailAddress(fromEmail, fullName)
-            );
-
-            await SendEmail(dto);
-        }
-
         protected virtual async Task SendEmail(SendGridMailDto mailDto)
         {
             var msg = new SendGridMessage();

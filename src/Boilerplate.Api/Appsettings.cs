@@ -21,11 +21,6 @@ namespace Boilerplate.Api
         public string SendFromName { get; set; }
         public string SendFromEmail { get; set; }
         public string ResetPasswordTemplateId { get; set; }
-        public string RentalConfirmationTemplateId { get; set; }
-        public string RentalCancellationLink { get; set; }
-        public string ContactTemplateId { get; set; }
-        public string ContactMailToName { get; set; }
-        public string ContactMailToEmail { get; set; }
     }
 
     public class AuthorizationSettings
