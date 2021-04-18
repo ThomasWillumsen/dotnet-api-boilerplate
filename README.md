@@ -30,7 +30,9 @@ Hosted at:
 ### Configuration
 Configurations are contained within the appsettings.json file.
 Depending on the `ASPNETCORE_ENVIRONMENT` environment variable, an additional appsettings.{env}.json file will be read, which contains additional environment-specific configuration.
+
 These files should never contain secrets as they will be committed to github.
+
 Instead, set secret values as environment variables when running the project.
 Using VS Code, a gitignored launch.json file can have a configuration containing an env object as such:
 ```
@@ -44,10 +46,13 @@ Using VS Code, a gitignored launch.json file can have a configuration containing
 
 ## Entity Framework
 Migrations are applied when the application starts and should generally not be applied manually using the command line.
+
 This means that upon deploying the app, migrations will automatically update the database.
+
 While you are working with a new database scheme you should **not** connect to the Test or Production database,
 because you might accidentally apply migrations to the database.
 It should instead point at a local database running on your machine.
+
 I use the following connection string to point at a locally running LocalDb, which can be installed as part of the SQL Server Express installation. `Server=(localdb)\\MSSQLLocalDB;Initial Catalog=OperationDashboard-local;Integrated Security=true"`
 Connect to the local database in SSMS using server name: (LocalDB)\MSSQLLocalDB.
 
