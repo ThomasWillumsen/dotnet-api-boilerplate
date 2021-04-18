@@ -27,14 +27,13 @@ namespace Boilerplate.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureIOptions(Configuration);
             var appsettings = Configuration.Get<Appsettings>();
             services.AddDbContext<AppDbContext>(opts =>
             {
-                opts.UseSqlServer(Configuration.GetConnectionString("DbConnection"));
+                opts.UseSqlServer(Configuration.GetConnectionString(nameof(ConnectionStrings.DbConnection)));
             });
 
             services.AddScoped<IPasswordService, PasswordService>();
@@ -52,13 +51,14 @@ namespace Boilerplate.Api
                 })
                 .ConfigureApiBehaviorOptions();
 
+            // to support hosting of a single page application alongside an API.
+            // place the SPA finished build in the folder Frontend/build. It will be served at the hostname root
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "Frontend/build"; });
             services.AddAuth(appsettings.Authorization);
             services.AddCustomSwagger();
         }
 
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             app.UseStaticFiles();

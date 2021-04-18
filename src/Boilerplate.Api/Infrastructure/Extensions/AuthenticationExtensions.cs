@@ -10,6 +10,10 @@ namespace Boilerplate.Api.Infrastructure.Extensions{
 
     public static class AuthenticationExtensions
     {
+        /// <summary>
+        /// Add JWT bearer scheme. 
+        /// Using the [Authorize] attribute on controllers or controller-actions, will activate bearer authentication.
+        /// </summary>
         public static IServiceCollection AddAuth(this IServiceCollection services, AuthorizationSettings settings){
             services.AddAuthentication(options =>
             {

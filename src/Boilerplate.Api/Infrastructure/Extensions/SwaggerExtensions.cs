@@ -8,6 +8,9 @@ using Microsoft.OpenApi.Models;
 namespace Boilerplate.Api.Infrastructure.Extensions{
 
     public static class SwaggerExtensions{
+        /// <summary>
+        /// Authentication will be set up to use jwt bearer tokens
+        /// </summary>
         public static IServiceCollection AddCustomSwagger(this IServiceCollection services){
             services.AddSwaggerGen(c =>
             {
@@ -49,6 +52,10 @@ namespace Boilerplate.Api.Infrastructure.Extensions{
             return services;
         }
 
+        /// <summary>
+        /// UI is served at /ui/swagger <br/>
+        /// OpenAPI definition is served at /swagger/v1/swagger.json or /swagger/v1/swagger.yaml
+        /// </summary>
         public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)
         {
             app.UseSwagger();
