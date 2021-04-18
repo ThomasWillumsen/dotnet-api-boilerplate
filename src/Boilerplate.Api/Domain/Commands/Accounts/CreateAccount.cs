@@ -7,6 +7,8 @@ using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
+using Microsoft.Data.SqlClient;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts
 {
@@ -40,9 +42,9 @@ namespace Boilerplate.Api.Domain.Commands.Accounts
                 }
                 catch (DbUpdateException e)
                 {
-                    // if (e.InnerException is MySqlException mysqlEx &&
-                    //     mysqlEx.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
-                    //     throw new ConflictException(ErrorCodes.ContentPage.CONFLICT);
+                    if (e.InnerException is SqlException sqlEx &&
+                        sqlEx.Number == 2601)
+                        throw new ConflictException(ErrorCodes.Account.CREATEACCOUNT_EMAIL_ALREADY_EXIST);
 
                     throw;
                 }

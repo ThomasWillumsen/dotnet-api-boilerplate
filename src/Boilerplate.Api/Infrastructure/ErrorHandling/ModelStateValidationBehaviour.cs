@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 
-namespace Boilerplate.Api.Infrastructure.Middleware
+namespace Boilerplate.Api.Infrastructure.ErrorHandling
 {
     /// <summary>
     /// Catch invalid model states and format a proper response to the client

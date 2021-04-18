@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Boilerplate.Api.Controllers;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Infrastructure.Middleware
 {

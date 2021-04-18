@@ -14,6 +14,7 @@ using Boilerplate.Api.Infrastructure.Authorization;
 using Boilerplate.Api.Infrastructure;
 using Boilerplate.Api.Infrastructure.Middleware;
 using Boilerplate.Api.Infrastructure.Extensions;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api
 {

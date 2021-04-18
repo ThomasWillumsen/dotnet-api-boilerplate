@@ -1,4 +1,4 @@
-namespace Boilerplate.Api.Domain.Exceptions
+namespace Boilerplate.Api.Infrastructure.ErrorHandling
 {
     public class ErrorCode
     {

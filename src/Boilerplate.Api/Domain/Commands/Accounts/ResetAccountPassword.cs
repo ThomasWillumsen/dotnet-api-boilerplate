@@ -6,6 +6,7 @@ using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts
 {
@@ -30,7 +31,7 @@ namespace Boilerplate.Api.Domain.Commands.Accounts
             {
                 var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == request.Email);
                 if (account == null)
-                    throw new NotFoundException(ErrorCodes.Account.EMAIL_DOESNT_EXIST);
+                    throw new NotFoundException(ErrorCodes.Account.LOGIN_EMAIL_DOESNT_EXIST);
 
                 var resetToken = Guid.NewGuid();
                 account.ResetPasswordToken = resetToken;

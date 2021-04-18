@@ -1,3 +1,5 @@
+using Boilerplate.Api.Infrastructure.ErrorHandling;
+
 namespace Boilerplate.Api.Domain.Exceptions
 {
     /// <summary>

@@ -6,6 +6,7 @@ using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts
 {
@@ -28,7 +29,7 @@ namespace Boilerplate.Api.Domain.Commands.Accounts
             {
                 var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.ResetPasswordToken == request.ResetPasswordToken);
                 if (account == null)
-                    throw new BusinessRuleException(ErrorCodes.Account.RESETPASSWORDTOKEN_INVALID);
+                    throw new BusinessRuleException(ErrorCodes.Account.RESETPASSWORD_TOKEN_INVALID);
 
                 var hashSalt = _passwordService.EncryptPassword(request.Password);
                 account.Password = hashSalt.Hash;

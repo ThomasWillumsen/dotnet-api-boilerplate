@@ -6,6 +6,7 @@ using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts
 {
@@ -30,13 +31,13 @@ namespace Boilerplate.Api.Domain.Commands.Accounts
             {
                 var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == request.Email);
                 if (account == null)
-                    throw new NotFoundException(ErrorCodes.Account.EMAIL_DOESNT_EXIST);
+                    throw new NotFoundException(ErrorCodes.Account.LOGIN_EMAIL_DOESNT_EXIST);
 
                 if (string.IsNullOrEmpty(account.Password))
-                    throw new BusinessRuleException(ErrorCodes.Account.PASSWORD_NOT_CREATED);
+                    throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_NOT_CREATED);
 
                 if (_passwordService.VerifyPassword(request.Password, account.Salt, account.Password) == false)
-                    throw new BusinessRuleException(ErrorCodes.Account.PASSWORD_INVALID);
+                    throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_INVALID);
 
                 return account;
             }
