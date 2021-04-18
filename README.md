@@ -53,8 +53,8 @@ Connect to the local database in SSMS using server name: (LocalDB)\MSSQLLocalDB.
 To add new migrations
 
 ```sh
-cd ./src/Boilerplate.Core/
-dotnet ef migrations add InitialCreate -o ./Database/Migrations/
+cd ./src/Boilerplate.Api/
+dotnet ef migrations add InitialCreate -o ./Infrastructure/Database/Migrations
 ```
 
 ## Run the app
@@ -77,3 +77,19 @@ The general strategy for testing is the following:
 
 To run tests one can use a test explorer in the code editor or run the command: `dotnet test`.
 The same command is run as part of the deploy pipeline. Nothing will be deployed if any test fails.
+
+## Deployment & hosting
+
+The application is currently hosted at Simply.com.
+We use github actions as CI/CD tool. Upon pushing to the Dev branch, any changes will be deployed to our Test server.
+In the csproj file the following applies to the Debug configuration:
+
+```xml
+<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+</PropertyGroup>
+```
+
+This enables running multiples applications in the IIS app-pool on the server.
+The main application runs In-process and all others run Out-of-process.

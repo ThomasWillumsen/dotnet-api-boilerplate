@@ -22,7 +22,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Boilerplate.Api\Boilerplate.Api.csproj" />
-    <ProjectReference Include="..\..\src\Boilerplate.Core\Boilerplate.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update=".\TestFiles\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

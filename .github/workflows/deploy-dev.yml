@@ -1,0 +1,41 @@
+# name: Build, Test and Deploy API
+
+# on:
+#   push:
+#     branches: [dev]
+#   pull_request:
+#     branches: [dev]
+
+# jobs:
+#   build-test-and-deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Setup .Net
+#         uses: actions/setup-dotnet@v1
+#         with:
+#           dotnet-version: 5.0.x
+#       - name: Build
+#         run: dotnet build
+#       - name: Test
+#         run: dotnet test --verbosity normal
+#       - name: Publish Debug
+#         run: dotnet publish ./src/Boilerplate.Api/ --runtime win-x86 --self-contained true -c Debug
+#       - name: Kill application (http request)
+#         uses: fjogeleit/http-request-action@v1.7.3
+#         with:
+#           url: https://dev.boilerplate.dk/api/v1/System/kill?graceful=true
+#           method: GET
+#           contentType: application/json
+#           preventFailureOnNoResponse: true
+#       - name: FTP Deploy
+#         uses: SamKirkland/FTP-Deploy-Action@4.0.0
+#         with:
+#           server: ${{ secrets.FTP_SERVER }}
+#           username: ${{ secrets.FTP_USERNAME }}
+#           password: ${{ secrets.FTP_PASSWORD }}
+#           port: 21
+#           protocol: ftp
+#           exclude: wwwroot/images/contentPages/**
+#           local-dir: ./src/Boilerplate.Api/bin/Debug/net5.0/win-x86/publish/
+#           server-dir: /dev/
