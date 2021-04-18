@@ -53,7 +53,7 @@ namespace Boilerplate.Api.Domain.Services
             msg.SetTemplateId(mailDto.TemplateId);
             msg.SetTemplateData(mailDto.TemplateData);
 
-            // TODO: uncomment and get write a sendgrid API key in appsettings.json
+            // TODO: uncomment and write a sendgrid API key in appsettings.json
             // var response = await _sendGridClient.SendEmailAsync(msg);
             // if (!response.IsSuccessStatusCode)
             // {
