@@ -1,6 +1,6 @@
 # REST API Boilerplate
 
-Everything in this repo is meant as a boilerplate to copy when starting a new API project. Even the rest of this readme file is example-text.
+Everything in this repo is meant as a boilerplate to copy when starting a new API project. Even the rest of this readme file consts of example-text.
 
 ## About this project
 
@@ -14,16 +14,15 @@ Hosted at:
 
 **Highlights:**
 
-- .NET 5
+- .NET 6
 - CQRS architecture and mediator pattern
-- The API is documented using Swagger UI at `/ui/swagger`.
+- The API is documented using Swagger UI at `/index.html`.
 - An SQL Server database is administered using Entity Framework and the code-first principle with migrations.
 - SendGrid integration for sending emails
-- The project is also setup to host a SPA alongside the API.
 
 ### Prerequisites
 
-- .Net SDK 5.0.1
+- .Net SDK 6
 
 ## Getting Started
 
@@ -44,10 +43,12 @@ Using VS Code, a gitignored launch.json file can have a configuration containing
 }
 ```
 
+^the above env variables are required to run the project as of writing this.
+
 ## Entity Framework
 Migrations are applied when the application starts and should generally not be applied manually using the command line.
 
-This means that upon deploying the app, migrations will automatically update the database.
+This means that upon deploying the app, migrations will automatically update the database when the newly deployed app starts.
 
 While you are working with a new database scheme you should **not** connect to the Test or Production database,
 because you might accidentally apply migrations to the database.

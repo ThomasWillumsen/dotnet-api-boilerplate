@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Boilerplate.Api.Controllers.Accounts
+namespace Boilerplate.Api.Controllers.Accounts;
+
+public class ResetAccountPasswordRequest
 {
-    public class ResetAccountPasswordRequest
-    {
-        [Required]
-        public string Email { get; set; }
-    }
+    [Required]
+    public string Email { get; set; }
 }

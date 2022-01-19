@@ -8,36 +8,35 @@ using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
 
-namespace Boilerplate.Api.Domain.Commands.Accounts
+namespace Boilerplate.Api.Domain.Commands.Accounts;
+
+public static class UpdateAccountPassword
 {
-    public static class UpdateAccountPassword
+    public record Command(Guid ResetPasswordToken, string Password) : IRequest;
+
+    public class Handler : AsyncRequestHandler<Command>
     {
-        public record Command(Guid ResetPasswordToken, string Password) : IRequest;
+        private readonly AppDbContext _dbContext;
+        private readonly IPasswordService _passwordService;
 
-        public class Handler : AsyncRequestHandler<Command>
+        public Handler(AppDbContext dbContext, IPasswordService passwordService)
         {
-            private readonly AppDbContext _dbContext;
-            private readonly IPasswordService _passwordService;
+            _dbContext = dbContext;
+            _passwordService = passwordService;
+        }
 
-            public Handler(AppDbContext dbContext, IPasswordService passwordService)
-            {
-                _dbContext = dbContext;
-                _passwordService = passwordService;
-            }
+        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        {
+            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.ResetPasswordToken == request.ResetPasswordToken);
+            if (account == null)
+                throw new BusinessRuleException(ErrorCodes.Account.RESETPASSWORD_TOKEN_INVALID);
 
-            protected override async Task Handle(Command request, CancellationToken cancellationToken)
-            {
-                var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.ResetPasswordToken == request.ResetPasswordToken);
-                if (account == null)
-                    throw new BusinessRuleException(ErrorCodes.Account.RESETPASSWORD_TOKEN_INVALID);
+            var hashSalt = _passwordService.EncryptPassword(request.Password);
+            account.Password = hashSalt.Hash;
+            account.Salt = hashSalt.Salt;
+            account.ResetPasswordToken = null;
 
-                var hashSalt = _passwordService.EncryptPassword(request.Password);
-                account.Password = hashSalt.Hash;
-                account.Salt = hashSalt.Salt;
-                account.ResetPasswordToken = null;
-
-                await _dbContext.SaveChangesAsync();
-            }
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -4,32 +4,31 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Boilerplate.Api.Tests.TestUtils
+namespace Boilerplate.Api.Tests.TestUtils;
+
+public static class HttpExtensions
 {
-    public static class HttpExtensions
+    public static StringContent ToHttpStringContent(this object obj)
     {
-        public static StringContent ToHttpStringContent(this object obj)
+        return new StringContent(
+            JsonSerializer.Serialize(obj),
+            Encoding.UTF8,
+            "application/json");
+    }
+
+    public static async Task<T> DeserializeHttpResponse<T>(this HttpResponseMessage httpResponseMessage)
+    {
+        var options = new JsonSerializerOptions
         {
-            return new StringContent(
-                JsonSerializer.Serialize(obj),
-                Encoding.UTF8,
-                "application/json");
-        }
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+        };
 
-        public static async Task<T> DeserializeHttpResponse<T>(this HttpResponseMessage httpResponseMessage)
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
-            };
+        options.Converters.Add(new JsonStringEnumConverter());
 
-            options.Converters.Add(new JsonStringEnumConverter());
-
-            var json = await httpResponseMessage.Content.ReadAsStringAsync();
-            var obj = JsonSerializer.Deserialize<T>(json, options);
-            return obj;
-        }
+        var json = await httpResponseMessage.Content.ReadAsStringAsync();
+        var obj = JsonSerializer.Deserialize<T>(json, options);
+        return obj;
     }
 }

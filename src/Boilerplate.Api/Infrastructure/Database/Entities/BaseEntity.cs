@@ -10,6 +10,7 @@ namespace Boilerplate.Api.Infrastructure.Database.Entities
         public int Id { get; set; }
 
         public DateTime CreatedDate { get; set; }
+        
         public DateTime LastModifiedDate { get; set; }
     }
 }

@@ -8,77 +8,76 @@ using System.Text.Json;
 using Boilerplate.Api.Controllers;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
 
-namespace Boilerplate.Api.Infrastructure.Middleware
+namespace Boilerplate.Api.Infrastructure.Middleware;
+
+/// <summary>
+/// middleware to catch exceptions and format the api response.
+/// </summary>
+public class ExceptionMiddleware
 {
-    /// <summary>
-    /// middleware to catch exceptions and format the api response.
-    /// </summary>
-    public class ExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
+        _next = next;
+        _logger = logger;
+    }
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public async Task InvokeAsync(HttpContext httpContext)
+    {
+        try
         {
-            _next = next;
-            _logger = logger;
+            await _next(httpContext);
+        }
+        catch (Exception e)
+        {
+            await HandleExceptionAsync(httpContext, e);
+        }
+    }
+
+    private Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        var httpStatusCode = HttpStatusCode.InternalServerError;
+        var errorCode = ErrorCodes.INTERNAL.Code;
+        var errorMessage = ErrorCodes.INTERNAL.Message;
+
+        if (exception is BusinessRuleException brEx)
+        {
+            httpStatusCode = HttpStatusCode.UnprocessableEntity;
+            errorCode = brEx.ErrorCode;
+            errorMessage = brEx.ErrorMessage;
+        }
+        else if (exception is NotFoundException nfEx)
+        {
+            httpStatusCode = HttpStatusCode.NotFound;
+            errorCode = nfEx.ErrorCode;
+            errorMessage = nfEx.Message;
+        }
+        else if (exception is ConflictException cEx)
+        {
+            httpStatusCode = HttpStatusCode.Conflict;
+            errorCode = cEx.ErrorCode;
+            errorMessage = cEx.Message;
+        }
+        else if (exception is BadFormatException bfEx)
+        {
+            httpStatusCode = HttpStatusCode.BadRequest;
+            errorCode = bfEx.ErrorCode;
+            errorMessage = bfEx.Message;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext)
+        var errorResponse = new ApiErrorResponse(errorCode, errorMessage);
+        var serializedResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
         {
-            try
-            {
-                await _next(httpContext);
-            }
-            catch (Exception e)
-            {
-                await HandleExceptionAsync(httpContext, e);
-            }
-        }
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
-        {
-            var httpStatusCode = HttpStatusCode.InternalServerError;
-            var errorCode = ErrorCodes.INTERNAL.Code;
-            var errorMessage = ErrorCodes.INTERNAL.Message;
+        _logger.LogWarning("ExceptionMiddleware {errorResponse}", serializedResponse);
 
-            if (exception is BusinessRuleException brEx)
-            {
-                httpStatusCode = HttpStatusCode.UnprocessableEntity;
-                errorCode = brEx.ErrorCode;
-                errorMessage = brEx.ErrorMessage;
-            }
-            else if (exception is NotFoundException nfEx)
-            {
-                httpStatusCode = HttpStatusCode.NotFound;
-                errorCode = nfEx.ErrorCode;
-                errorMessage = nfEx.Message;
-            }
-            else if (exception is ConflictException cEx)
-            {
-                httpStatusCode = HttpStatusCode.Conflict;
-                errorCode = cEx.ErrorCode;
-                errorMessage = cEx.Message;
-            }
-            else if (exception is BadFormatException bfEx)
-            {
-                httpStatusCode = HttpStatusCode.BadRequest;
-                errorCode = bfEx.ErrorCode;
-                errorMessage = bfEx.Message;
-            }
-
-            var errorResponse = new ApiErrorResponse(errorCode, errorMessage);
-            var serializedResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            });
-
-            _logger.LogWarning("ExceptionMiddleware {errorResponse}", serializedResponse);
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)httpStatusCode;
-            return context.Response.WriteAsync(serializedResponse, context.RequestAborted);
-        }
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)httpStatusCode;
+        return context.Response.WriteAsync(serializedResponse, context.RequestAborted);
     }
 }
