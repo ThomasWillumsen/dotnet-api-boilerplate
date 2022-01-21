@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using MediatR;
 using Boilerplate.Api.Domain.Commands.Accounts;
 using Microsoft.AspNetCore.Authorization;
-using Boilerplate.Api.Infrastructure.Authorization;
 using Boilerplate.Api.Domain.Queries.Accounts;
 using System.Linq;
+using Boilerplate.Api.Domain.Commands.Accounts.LoginAccount;
 
 namespace Boilerplate.Api.Controllers.Accounts;
 
@@ -20,14 +20,10 @@ namespace Boilerplate.Api.Controllers.Accounts;
 public class AccountsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IJwtTokenHelper _jwtTokenHelper;
 
-    public AccountsController(
-        IMediator mediator,
-        IJwtTokenHelper jwtTokenHelper)
+    public AccountsController(IMediator mediator)
     {
         _mediator = mediator;
-        _jwtTokenHelper = jwtTokenHelper;
     }
 
     /// <summary>
@@ -61,9 +57,8 @@ public class AccountsController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<LoginResponse>> LoginAccount([FromBody] LoginAccountRequest body)
     {
-        var account = await _mediator.Send(new LoginAccount.Command(body.Email, body.Password));
-        var jwtToken = _jwtTokenHelper.GenerateJwtToken(account);
-        return Ok(new LoginResponse(jwtToken, account));
+        var loginResult = await _mediator.Send(new LoginAccount.Command(body.Email, body.Password));
+        return Ok(new LoginResponse(loginResult.JwtToken, loginResult.Account));
     }
 
     /// <summary>

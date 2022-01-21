@@ -10,10 +10,8 @@ namespace Boilerplate.Api.Domain.Queries.Accounts;
 
 public static class GetAccounts
 {
-    // query
     public record Query() : IRequest<IEnumerable<AccountEntity>>;
 
-    // handler
     public class Handler : IRequestHandler<Query, IEnumerable<AccountEntity>>
     {
         private readonly AppDbContext _dbContext;
