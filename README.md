@@ -60,6 +60,11 @@ It should instead point at a local database running on your machine.
 I use the following connection string to point at a locally running LocalDb, which can be installed as part of the SQL Server Express installation. `Server=(localdb)\\MSSQLLocalDB;Initial Catalog=Boilerplate-local;Integrated Security=true"`
 Connect to the local database in SSMS using server name: (LocalDB)\MSSQLLocalDB.
 
+Install the EF global tool:
+```sh
+dotnet tool install --global dotnet-ef
+```
+
 To add new migrations
 
 ```sh
