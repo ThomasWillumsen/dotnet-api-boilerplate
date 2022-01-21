@@ -1,6 +1,6 @@
 # REST API Boilerplate
 
-Everything in this repo is meant as a boilerplate to copy when starting a new API project. Even the rest of this readme file consts of example-text.
+Everything in this repo is meant as a boilerplate to copy when starting a new API project. Even the rest of this readme file consists of example-text.
 
 ## About this project
 
@@ -44,11 +44,10 @@ Using VS Code, a gitignored launch.json file can have a configuration containing
 ```
 
 The above env variables are required to run the project as of writing this.
-It is also required to configure the SendGrid section in appsettings.json with proper template ids and stuff.
+It is also required to configure the SendGrid section in appsettings.json with template ids and stuff.
 
 ## Entity Framework
 Migrations are applied when the application starts and should generally not be applied manually using the command line.
-
 This means that upon deploying the app, migrations will automatically update the database when the newly deployed app starts.
 
 While you are working with a new database scheme you should **not** connect to the Test or Production database,
