@@ -49,7 +49,7 @@ Using VS Code, a gitignored launch.json file can have a configuration containing
 The above env variables are required to run the project as of writing this.
 It is also required to configure the SendGrid section in appsettings.json with template ids and stuff.
 
-## Entity Framework
+### Entity Framework
 Migrations are applied when the application starts and should generally not be applied manually using the command line.
 This means that upon deploying the app, migrations will automatically update the database when the newly deployed app starts.
 
@@ -72,7 +72,7 @@ cd ./src/Boilerplate.Api/
 dotnet ef migrations add MyMigrationName -o ./Infrastructure/Database/Migrations
 ```
 
-## Run the app
+### Run the app
 
 Using dotnet command-line
 
@@ -80,7 +80,7 @@ Using dotnet command-line
 dotnet run --project ./src/Boilerplate.Api/
 ```
 
-## Tests
+### Tests
 
 We're using Xunit and NSubstitute.
 The general strategy for testing is the following:
@@ -93,7 +93,7 @@ The general strategy for testing is the following:
 To run tests use a test explorer in the code editor or run the command: `dotnet test`.
 The same command should be run as part of the deploy pipeline. Nothing should be deployed if any test fails.
 
-## Deployment & hosting
+### Deployment & hosting
 
 The application is currently hosted at Simply.com.
 We use github actions as CI/CD tool. Upon pushing to the Dev branch, any changes will be deployed to our Test server.
