@@ -29,7 +29,6 @@ Hosted at:
 - SendGrid account
 - Database connection (SQL Server or LocalDb)
 
-## Getting Started
 ### Configuration
 Configurations are contained within the appsettings.json file.
 Depending on the `ASPNETCORE_ENVIRONMENT` environment variable, an additional appsettings.{env}.json file will be read, which contains additional environment-specific configuration.
