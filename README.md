@@ -21,6 +21,7 @@ Hosted at:
 - Account API with login, reset password, update password etc.
 - Authorization with bearer tokens
 - SendGrid integration for sending emails
+- Test-project with a few example tests
 
 ### Prerequisites
 - .Net SDK 6
