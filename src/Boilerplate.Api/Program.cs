@@ -34,7 +34,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<Appsettings>(builder.Configuration);
 builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection(nameof(Appsettings.SendGrid)));
 builder.Services.Configure<AuthorizationSettings>(builder.Configuration.GetSection(nameof(Appsettings.Authorization)));
-builder.Services.Configure<RentalSettings>(builder.Configuration.GetSection(nameof(Appsettings.Rental)));
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ISendGridClientFacade, SendGridClientFacade>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

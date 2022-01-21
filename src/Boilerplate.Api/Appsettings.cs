@@ -7,7 +7,6 @@ public class Appsettings
     public SendGridSettings SendGrid { get; set; }
     public AuthorizationSettings Authorization { get; set; }
     public DefaultAccount[] DefaultAccounts { get; set; } = new DefaultAccount[0];
-    public RentalSettings Rental { get; set; }
 }
 
 public class ConnectionStrings
@@ -35,9 +34,4 @@ public class DefaultAccount
 {
     public string FullName { get; set; }
     public string Email { get; set; }
-}
-
-public class RentalSettings
-{
-    public string DefaultCategoryName { get; set; }
 }
