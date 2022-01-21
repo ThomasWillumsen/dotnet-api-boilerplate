@@ -18,6 +18,8 @@ Hosted at:
 - CQRS architecture and mediator pattern
 - The API is documented using Swagger UI at `/index.html`.
 - An SQL Server database is administered using Entity Framework and the code-first principle with migrations.
+- Fundamental account managagement with login, reset password, update password etc.
+- Authorization with bearer tokens
 - SendGrid integration for sending emails
 
 ### Prerequisites
