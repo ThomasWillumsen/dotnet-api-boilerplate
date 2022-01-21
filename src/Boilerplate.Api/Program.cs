@@ -53,30 +53,10 @@ if (app.Environment.EnvironmentName != "Testing") // dont run this for integrati
 {
     using (var scope = app.Services.CreateScope())
     {
-        await MigrateDb(scope);
-        await EnsureDefaultAccounts(scope);
-    }
-}
-
-async Task MigrateDb(IServiceScope scope)
-{
-    var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
-
-async Task EnsureDefaultAccounts(IServiceScope scope)
-{
-    var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
-    var mediator = scope.ServiceProvider.GetService<IMediator>();
-    var defaultAccountsToCreate = appsettings.DefaultAccounts;
-    var existingAccounts = await dbContext.Accounts.Select(x => x.Email).ToListAsync();
-
-    foreach (var defaultAcc in defaultAccountsToCreate)
-    {
-        if (existingAccounts.Contains(defaultAcc.Email, StringComparer.InvariantCultureIgnoreCase))
-            continue;
-
-        await mediator.Send(new CreateAccount.Command(defaultAcc.FullName, defaultAcc.Email));
+        var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
+        var mediator = scope.ServiceProvider.GetService<IMediator>();
+        await dbContext.Database.MigrateAsync();
+        await mediator.Send(new EnsureDefaultAccounts.Command());
     }
 }
 
