@@ -17,8 +17,21 @@ public class ConnectionStrings
 public class SendGridSettings
 {
     public string ApiKey { get; set; }
+    
+    /// <summary>
+    /// Will appear as the From name in an email sent to a customer
+    /// </summary>
     public string SendFromName { get; set; }
+
+    /// <summary>
+    /// Will appear as the From email in an email sent to a customer.
+    /// Might also be used as reply-to
+    /// </summary>
     public string SendFromEmail { get; set; }
+
+    /// <summary>
+    /// Template id from a custom template in SendGrid
+    /// </summary>
     public string ResetPasswordTemplateId { get; set; }
 }
 

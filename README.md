@@ -21,11 +21,11 @@ Hosted at:
 - SendGrid integration for sending emails
 
 ### Prerequisites
-
 - .Net SDK 6
+- SendGrid account
+- Database connection (SQL Server or LocalDb)
 
 ## Getting Started
-
 ### Configuration
 Configurations are contained within the appsettings.json file.
 Depending on the `ASPNETCORE_ENVIRONMENT` environment variable, an additional appsettings.{env}.json file will be read, which contains additional environment-specific configuration.
@@ -54,7 +54,7 @@ While you are working with a new database scheme you should **not** connect to t
 because you might accidentally apply migrations to the database.
 It should instead point at a local database running on your machine.
 
-I use the following connection string to point at a locally running LocalDb, which can be installed as part of the SQL Server Express installation. `Server=(localdb)\\MSSQLLocalDB;Initial Catalog=OperationDashboard-local;Integrated Security=true"`
+I use the following connection string to point at a locally running LocalDb, which can be installed as part of the SQL Server Express installation. `Server=(localdb)\\MSSQLLocalDB;Initial Catalog=Boilerplate-local;Integrated Security=true"`
 Connect to the local database in SSMS using server name: (LocalDB)\MSSQLLocalDB.
 
 To add new migrations
