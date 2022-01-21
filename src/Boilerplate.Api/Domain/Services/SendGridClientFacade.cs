@@ -34,12 +34,11 @@ public class SendGridClientFacade : ISendGridClientFacade
         msg.SetTemplateId(mailDto.TemplateId);
         msg.SetTemplateData(mailDto.TemplateData);
 
-        // TODO: uncomment and write a sendgrid API key in appsettings.json
-        // var response = await _sendGridClient.SendEmailAsync(msg);
-        // if (!response.IsSuccessStatusCode)
-        // {
-        //     var content = await response.Body.ReadAsStringAsync();
-        //     throw new Exception($"SendGrid invoked sending to with template {msg.TemplateId}, response {content} {response.Body}");
-        // }
+        var response = await _sendGridClient.SendEmailAsync(msg);
+        if (!response.IsSuccessStatusCode)
+        {
+            var content = await response.Body.ReadAsStringAsync();
+            throw new Exception($"SendGrid invoked sending to with template {msg.TemplateId}, response {content}");
+        }
     }
 }
