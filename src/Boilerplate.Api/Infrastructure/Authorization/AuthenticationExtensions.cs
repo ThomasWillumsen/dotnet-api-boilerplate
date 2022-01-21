@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Boilerplate.Api.Infrastructure.Extensions;
+namespace Boilerplate.Api.Infrastructure.Authorization;
 
 public static class AuthenticationExtensions
 {

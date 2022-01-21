@@ -15,9 +15,9 @@ using Microsoft.Extensions.Configuration;
 using Boilerplate.Api.Infrastructure;
 using System.Text.Json.Serialization;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
-using Boilerplate.Api.Infrastructure.Extensions;
 using Boilerplate.Api.Infrastructure.Middleware;
 using Boilerplate.Api;
+using Boilerplate.Api.Infrastructure.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 var appsettings = builder.Configuration.Get<Appsettings>();
@@ -36,7 +36,7 @@ builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection(na
 builder.Services.Configure<AuthorizationSettings>(builder.Configuration.GetSection(nameof(Appsettings.Authorization)));
 builder.Services.Configure<RentalSettings>(builder.Configuration.GetSection(nameof(Appsettings.Rental)));
 builder.Services.AddScoped<IPasswordService, PasswordService>();
-builder.Services.AddScoped<IMailService, SendGridService>();
+builder.Services.AddScoped<ISendGridClientFacade, SendGridClientFacade>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<ISendGridClient, SendGridClient>(serviceProvider => new SendGridClient(appsettings.SendGrid.ApiKey));
 builder.Services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
@@ -55,7 +55,6 @@ if (app.Environment.EnvironmentName != "Testing") // dont run this for integrati
     using (var scope = app.Services.CreateScope())
     {
         await MigrateDb(scope);
-        await SeedDb(scope);
         await EnsureDefaultAccounts(scope);
     }
 }
@@ -64,12 +63,6 @@ async Task MigrateDb(IServiceScope scope)
 {
     var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
     await dbContext.Database.MigrateAsync();
-}
-
-async Task SeedDb(IServiceScope scope)
-{
-    var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
-    await dbContext.SaveChangesAsync();
 }
 
 async Task EnsureDefaultAccounts(IServiceScope scope)

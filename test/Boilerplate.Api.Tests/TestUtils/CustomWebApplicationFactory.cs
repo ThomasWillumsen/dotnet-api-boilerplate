@@ -61,8 +61,8 @@ public class CustomWebApplicationFactory<TStartup>
                     options.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)); // to avoid transaction errors
                     });
 
-            services.RemoveAll(typeof(IMailService));
-            services.AddScoped<IMailService, STUB_Mailservice>();
+            services.RemoveAll(typeof(ISendGridClientFacade));
+            services.AddScoped<ISendGridClientFacade, STUB_SendGridClientFacade>();
         });
     }
 }

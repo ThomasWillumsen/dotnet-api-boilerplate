@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Boilerplate.Api.Infrastructure.Extensions;
+namespace Boilerplate.Api.Infrastructure.Swagger;
 
 public static class SwaggerExtensions
 {

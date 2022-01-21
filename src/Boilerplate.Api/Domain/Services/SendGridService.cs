@@ -7,14 +7,14 @@ using SendGrid.Helpers.Mail;
 
 namespace Boilerplate.Api.Domain.Services;
 
-public class SendGridService : IMailService
+public class SendGridClientFacade : ISendGridClientFacade
 {
-    private readonly ILogger<SendGridService> _logger;
+    private readonly ILogger<SendGridClientFacade> _logger;
     private readonly ISendGridClient _sendGridClient;
     private readonly SendGridSettings _sendGridSettings;
 
-    public SendGridService(
-        ILogger<SendGridService> logger,
+    public SendGridClientFacade(
+        ILogger<SendGridClientFacade> logger,
         IOptions<SendGridSettings> sendGridSettings,
         ISendGridClient sendGridClient)
     {
@@ -23,24 +23,7 @@ public class SendGridService : IMailService
         _sendGridSettings = sendGridSettings.Value;
     }
 
-    public async Task SendResetPasswordEmail(string email, string fullName, Guid resetPasswordToken)
-    {
-        var dto = new SendGridMailDto(
-            templateId: _sendGridSettings.ResetPasswordTemplateId,
-            templateData: new
-            {
-                fullName = fullName,
-                passwordToken = resetPasswordToken.ToString()
-            },
-            from: new EmailAddress(_sendGridSettings.SendFromEmail, _sendGridSettings.SendFromName),
-            to: new EmailAddress(email, fullName),
-            replyTo: null
-        );
-
-        await SendEmail(dto);
-    }
-
-    protected virtual async Task SendEmail(SendGridMailDto mailDto)
+    public async Task SendEmail(SendGridMailDto mailDto)
     {
         await Task.Run(() => {});
         var msg = new SendGridMessage();

@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
+using Boilerplate.Api.Domain.Commands.Emails;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts;
 
@@ -17,14 +18,14 @@ public static class ResetAccountPassword
     public class Handler : AsyncRequestHandler<Command>
     {
         private readonly AppDbContext _dbContext;
-        private readonly IMailService _mailService;
+        private readonly IMediator _mediator;
 
         public Handler(
             AppDbContext dbContext,
-            IMailService mailService)
+            IMediator mediator)
         {
             _dbContext = dbContext;
-            _mailService = mailService;
+            _mediator = mediator;
         }
 
         protected override async Task Handle(Command request, CancellationToken cancellationToken)
@@ -37,7 +38,8 @@ public static class ResetAccountPassword
             account.ResetPasswordToken = resetToken;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
-            await _mailService.SendResetPasswordEmail(account.Email, account.FullName, resetToken);
+
+            await _mediator.Send(new SendResetPasswordMail.Command(account.Email, account.FullName, resetToken));
         }
     }
 }
