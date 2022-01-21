@@ -16,6 +16,7 @@ Hosted at:
 
 - .NET 6
 - CQRS architecture and mediator pattern
+- Errorhandling with Exception middleware and error codes
 - The API is documented using Swagger UI at `/index.html`.
 - An SQL Server database is administered using Entity Framework and the code-first principle with migrations.
 - Account API with login, reset password, update password etc.
