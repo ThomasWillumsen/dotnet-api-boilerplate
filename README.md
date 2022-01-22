@@ -21,7 +21,7 @@ Hosted at:
 - An SQL Server database is administered using Entity Framework and the code-first principle with migrations.
 - Account API with login, reset password, update password etc.
 - Authorization with bearer tokens
-- SendGrid integration for sending emails
+- SendGrid integration for sending emails (including email-log and SendGrid webhooks for email delivery-status updates)
 - Test-project with a few example tests
 
 ### Prerequisites
