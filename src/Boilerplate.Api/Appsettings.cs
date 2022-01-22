@@ -17,6 +17,10 @@ public class ConnectionStrings
 public class SendGridSettings
 {
     public string ApiKey { get; set; }
+    /// <summary>
+    /// Retrieved from Sendgrid -> mailsettings -> signed webhooks
+    /// </summary>
+    public string VerificationKey { get; set; }
     
     /// <summary>
     /// Will appear as the From name in an email sent to a customer

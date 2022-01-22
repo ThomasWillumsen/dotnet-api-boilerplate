@@ -1,3 +1,4 @@
+using System;
 using SendGrid.Helpers.Mail;
 
 namespace Boilerplate.Api.Domain.Services;
@@ -7,12 +8,14 @@ public class SendGridMailDto
     public SendGridMailDto(
         string templateId,
         object templateData,
+        Guid reference,
         EmailAddress from,
         EmailAddress to,
         EmailAddress replyTo = null)
     {
         TemplateId = templateId;
         TemplateData = templateData;
+        Reference = reference;
         From = from;
         To = to;
         ReplyTo = replyTo;
@@ -22,6 +25,8 @@ public class SendGridMailDto
     public object TemplateData { get; set; }
     public EmailAddress From { get; set; }
     public EmailAddress To { get; set; }
+
+    public Guid Reference { get; set; }
 
     /// <summary>
     /// Optional

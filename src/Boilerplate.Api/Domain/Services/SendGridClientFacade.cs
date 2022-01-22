@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Boilerplate.Api.Infrastructure.Database.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;
@@ -33,6 +34,7 @@ public class SendGridClientFacade : ISendGridClientFacade
         msg.SetFrom(mailDto.From.Email, mailDto.From.Name);
         msg.SetTemplateId(mailDto.TemplateId);
         msg.SetTemplateData(mailDto.TemplateData);
+        msg.AddCustomArg(nameof(EmailLogEntity.Reference), mailDto.Reference.ToString());
 
         var response = await _sendGridClient.SendEmailAsync(msg);
         if (!response.IsSuccessStatusCode)

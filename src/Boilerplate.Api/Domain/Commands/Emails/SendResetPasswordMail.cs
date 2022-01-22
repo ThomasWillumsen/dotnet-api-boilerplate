@@ -6,6 +6,7 @@ using MediatR;
 using Boilerplate.Api.Infrastructure.Database;
 using Microsoft.Extensions.Options;
 using SendGrid.Helpers.Mail;
+using Boilerplate.Api.Infrastructure.Database.Entities;
 
 namespace Boilerplate.Api.Domain.Commands.Emails;
 
@@ -36,14 +37,18 @@ public static class SendResetPasswordMail
                 templateData: new
                 {
                     fullName = request.fullName,
-                    passwordToken = request.resetPasswordToken.ToString()
+                    resetLink = $"https://someurl.com/{request.resetPasswordToken.ToString()}"
                 },
+                Guid.NewGuid(),
                 from: new EmailAddress(_sendgridSettings.SendFromEmail, _sendgridSettings.SendFromName),
                 to: new EmailAddress(request.email, request.fullName),
                 replyTo: null
             );
 
             await _sendgridClient.SendEmail(dto);
+
+            await _dbContext.EmailLogs.AddAsync(new EmailLogEntity(request.email, EmailTypeEnum.ResetPassword, dto.Reference));
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Boilerplate.Api.Infrastructure.Database.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,10 +28,34 @@ namespace Boilerplate.Api.Infrastructure.Database.Migrations
                     table.PrimaryKey("PK_Accounts", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EmailLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reference = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmailType = table.Column<int>(type: "int", nullable: false),
+                    Event = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailLogs", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Email",
                 table: "Accounts",
                 column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmailLogs_Reference",
+                table: "EmailLogs",
+                column: "Reference",
                 unique: true);
         }
 
@@ -39,6 +63,9 @@ namespace Boilerplate.Api.Infrastructure.Database.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "EmailLogs");
         }
     }
 }

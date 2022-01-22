@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<AccountEntity> Accounts { get; set; }
+    public DbSet<EmailLogEntity> EmailLogs { get; set; }
 
     public override int SaveChanges() => SaveChangesAsync().Result;
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -46,7 +47,7 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<AccountEntity>()
-            .HasIndex(b => b.Email).IsUnique();
+        modelBuilder.Entity<AccountEntity>().HasIndex(b => b.Email).IsUnique();
+        modelBuilder.Entity<EmailLogEntity>().HasIndex(b => b.Reference).IsUnique();
     }
 }
