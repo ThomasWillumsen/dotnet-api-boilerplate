@@ -19,21 +19,15 @@ public static class LoginAccount
     public class Handler : IRequestHandler<Command, LoginAccountResult>
     {
         private readonly AppDbContext _dbContext;
-        private readonly ILogger<LoginAccount.Command> _logger;
-        private readonly AuthorizationSettings _authSettings;
         private readonly IPasswordService _passwordService;
         private readonly IJwtTokenHelper _jwtTokenHelper;
 
         public Handler(
             AppDbContext dbContext,
-            ILogger<LoginAccount.Command> logger,
-            IOptions<AuthorizationSettings> authSettings,
             IPasswordService passwordService,
             IJwtTokenHelper jwtTokenHelper)
         {
             _dbContext = dbContext;
-            _logger = logger;
-            _authSettings = authSettings.Value;
             _passwordService = passwordService;
             _jwtTokenHelper = jwtTokenHelper;
         }
