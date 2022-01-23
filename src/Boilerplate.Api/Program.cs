@@ -1,8 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System;
 using MediatR;
 using Boilerplate.Api.Domain.Commands.Accounts;
 using Boilerplate.Api.Infrastructure.Database;
@@ -18,10 +15,23 @@ using Boilerplate.Api.Infrastructure.ErrorHandling;
 using Boilerplate.Api.Infrastructure.Middleware;
 using Boilerplate.Api;
 using Boilerplate.Api.Infrastructure.Swagger;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 var appsettings = builder.Configuration.Get<Appsettings>();
-// Add services to the container.
+
+// init serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Default", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
     {
@@ -48,6 +58,7 @@ builder.Services.AddDbContext<AppDbContext>(opts =>
 builder.Services.AddAuth(appsettings.Authorization);
 builder.Services.AddCustomSwagger();
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 if (app.Environment.EnvironmentName != "Testing") // dont run this for integration tests
 {

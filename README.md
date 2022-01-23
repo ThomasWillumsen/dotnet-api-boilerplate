@@ -17,11 +17,12 @@ Hosted at:
 - .NET 6
 - CQRS architecture and mediator pattern
 - Errorhandling with Exception middleware and error codes
-- The API is documented using Swagger UI at `/index.html`.
-- An SQL Server database is administered using Entity Framework and the code-first principle with migrations.
+- Serilog with minimal request-logging
+- Swagger UI at `/index.html`.
+- Entity Framework and the code-first principle with migrations.
 - Account API with login, reset password, update password etc.
 - Authorization with bearer tokens
-- SendGrid integration for sending emails (including email-log and SendGrid webhooks for email delivery-status updates)
+- SendGrid integration for sending emails (including en email log and SendGrid webhooks for email delivery status updates)
 - Test-project with a few example tests
 
 ### Prerequisites
