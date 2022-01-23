@@ -17,6 +17,7 @@ using Boilerplate.Api;
 using Boilerplate.Api.Infrastructure.Swagger;
 using Serilog;
 using Serilog.Events;
+using Boilerplate.Api.Domain.PipelineBehaviours;
 
 var builder = WebApplication.CreateBuilder(args);
 var appsettings = builder.Configuration.Get<Appsettings>();
@@ -50,6 +51,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<ISendGridClient, SendGridClient>(serviceProvider => new SendGridClient(appsettings.SendGrid.ApiKey));
 builder.Services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
 builder.Services.AddMediatR(typeof(Boilerplate.Api.Infrastructure.Database.AppDbContext).Assembly); // use any type from Boilerplate.Api
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 builder.Services.AddDbContext<AppDbContext>(opts =>
 {
     opts.UseSqlServer(builder.Configuration.GetConnectionString(nameof(ConnectionStrings.DbConnection)));
