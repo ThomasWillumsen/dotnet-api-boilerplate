@@ -2,12 +2,12 @@ using Xunit;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
-using System.Net.Http;
-using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Tests.TestUtils;
 using System;
 using Boilerplate.Api.Controllers.Accounts;
 using Boilerplate.Api.Infrastructure.Database;
+using Boilerplate.Api.Infrastructure.Database.Entities;
+using Boilerplate.Api.Domain.Services;
 
 namespace Boilerplate.Api.Tests.Controllers;
 
@@ -21,99 +21,163 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
     }
 
     [Fact]
-    public async Task Account_FullSystemTest()
+    public async Task CreateAccount_Returns201()
     {
         // Arrange
-        var email = "someemail@asd.com";
-        var updatedEmail = "someotheremail@asd.com";
-        var fullName = "donald trump";
-        var updatedFullName = "kim jong un";
-        var passwordFirst = "somepassword12312";
-        HttpClient httpClient = null;
-
+        var email = "try54y4tre@asd.com";
         // Act
-        // 1. Create Account
-        httpClient = _factory.CreateNewHttpClient(true);
-        var createAccountResponse = await httpClient.PostAsync($"/api/v1/accounts",
+        var httpClient = _factory.CreateNewHttpClient(true);
+        var response = await httpClient.PostAsync($"/api/v1/accounts",
             new CreateAccountRequest
             {
                 Email = email,
-                FullName = fullName,
+                FullName = "donald trump",
                 IsAdmin = false
             }.ToHttpStringContent());
-        var account = await createAccountResponse.DeserializeHttpResponse<AccountResponse>();
 
-        // 2. Update Password
-        Guid? pwResetToken = null;
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var responseObj = await response.DeserializeHttpResponse<AccountResponse>();
+        Assert.Equal(email, responseObj.Email);
+    }
+
+    [Fact]
+    public async Task UpdateAccountPassword_Returns204()
+    {
+        // Arrange
+        AccountEntity account;
+        var resetPwToken = Guid.NewGuid();
         using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
         {
-            var createdAccount = await appDbContext.Accounts.FirstAsync();
-            pwResetToken = createdAccount.ResetPasswordToken;
+            account = new AccountEntity("donald trump", "fdgdfgdfs@asd.com"){
+                ResetPasswordToken = resetPwToken
+            };
+
+            appDbContext.Accounts.Add(account);
+            await appDbContext.SaveChangesAsync();
         }
 
-        httpClient = _factory.CreateNewHttpClient(false);
-        var updatePasswordResponse = await httpClient.PutAsync($"/api/v1/accounts/updatePassword",
+        // Act
+        var httpClient = _factory.CreateNewHttpClient(false);
+        var response = await httpClient.PutAsync($"/api/v1/accounts/updatePassword",
             new UpdateAccountPasswordRequest
             {
-                Password = passwordFirst,
-                ResetPasswordToken = pwResetToken.Value
+                Password = "somenewpassword",
+                ResetPasswordToken = resetPwToken
             }.ToHttpStringContent());
 
-        // 3. Login
-        httpClient = _factory.CreateNewHttpClient(false);
-        var loginResponse = await httpClient.PostAsync($"/api/v1/accounts/login",
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginAccount_Returns200()
+    {
+        // Arrange
+        AccountEntity account;
+        var password = "somepassword";
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        {
+            var pwService = _factory.GetScopedServiceProvider().GetService<IPasswordService>();
+            var pw = pwService.EncryptPassword(password);
+            account = new AccountEntity("donald trump", "6345dfsg@asd.com"){
+                Password = pw.Hash,
+                Salt = pw.Salt
+            };
+
+            appDbContext.Accounts.Add(account);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        // Act
+        var httpClient = _factory.CreateNewHttpClient(false);
+        var response = await httpClient.PostAsync($"/api/v1/accounts/login",
             new LoginAccountRequest
             {
-                Email = email,
-                Password = passwordFirst
+                Email = account.Email,
+                Password = password
             }.ToHttpStringContent());
 
-        // 4. Reset password
-        httpClient = _factory.CreateNewHttpClient(false);
-        var resetPwResponse = await httpClient.PostAsync($"/api/v1/accounts/resetPassword",
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var responseObj = await response.DeserializeHttpResponse<LoginResponse>();
+        Assert.NotNull(responseObj.Jwt);
+    }
+
+    [Fact]
+    public async Task ResetAccountPassword_Returns204()
+    {
+        // Arrange
+        AccountEntity account;
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        {
+            account = new AccountEntity("donald trump", "dfsgsfdgdf@asd.com");
+            appDbContext.Accounts.Add(account);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        // Act
+        var httpClient = _factory.CreateNewHttpClient(false);
+        var response = await httpClient.PostAsync($"/api/v1/accounts/resetPassword",
             new ResetAccountPasswordRequest
             {
-                Email = email
+                Email = account.Email
             }.ToHttpStringContent());
 
-        // 5. Update Account
-        httpClient = _factory.CreateNewHttpClient(true);
-        var updateAccountResponse = await httpClient.PutAsync($"/api/v1/accounts/{account.Id}",
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateAccount_Returns200()
+    {
+        // Arrange
+        AccountEntity account;
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        {
+            account = new AccountEntity("donald trump", "324141324@asd.com");
+            appDbContext.Accounts.Add(account);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        // Act
+        var httpClient = _factory.CreateNewHttpClient(true);
+        var response = await httpClient.PutAsync($"/api/v1/accounts/{account.Id}",
             new UpdateAccountRequest
             {
-                Email = updatedEmail,
-                FullName = updatedFullName
+                Email = "somenewemail@asd.com",
+                FullName = "kim jong un"
             }.ToHttpStringContent());
 
-        // 6. Update Account IsAdmin permissions
-        httpClient = _factory.CreateNewHttpClient(true);
-        var updateIsAdminResponse = await httpClient.PutAsync($"/api/v1/accounts/{account.Id}/updateIsAdmin",
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var responseObj = await response.DeserializeHttpResponse<AccountResponse>();
+        Assert.Equal(account.Id, responseObj.Id);
+    }
+
+    [Fact]
+    public async Task UpdateAccountIsAdmin_Returns204()
+    {
+        // Arrange
+        AccountEntity account;
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        {
+            account = new AccountEntity("donald trump", "sdfgsdfgdsf@asd.com");
+            appDbContext.Accounts.Add(account);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        // Act
+        var httpClient = _factory.CreateNewHttpClient(true);
+        var response = await httpClient.PutAsync($"/api/v1/accounts/{account.Id}/updateIsAdmin",
             new UpdateAccountIsAdminRequest
             {
                 IsAdmin = true
             }.ToHttpStringContent());
 
         // Assert
-        Assert.Equal(HttpStatusCode.Created, createAccountResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.NoContent, updatePasswordResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.NoContent, resetPwResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, updateAccountResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.NoContent, updateIsAdminResponse.StatusCode);
-
-        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
-        {
-            var createdAccount = await appDbContext.Accounts
-                .Include(x => x.Claims)
-                .FirstAsync(x => x.Id == account.Id);
-            Assert.Equal(updatedFullName, createdAccount.FullName);
-            Assert.Equal(updatedEmail, createdAccount.Email);
-            Assert.Equal(true, createdAccount.Claims.Count >= 2);
-            Assert.NotNull(createdAccount.Password);
-            Assert.NotNull(createdAccount.Salt);
-
-            var loginResponseObj = await loginResponse.DeserializeHttpResponse<LoginResponse>();
-            Assert.NotNull(loginResponseObj.Jwt);
-        }
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 }
