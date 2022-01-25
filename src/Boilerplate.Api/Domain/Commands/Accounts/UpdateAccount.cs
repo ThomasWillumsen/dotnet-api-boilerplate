@@ -34,7 +34,7 @@ public static class UpdateAccount
                 .Include(x => x.Claims)
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
             if(existingAccount == null)
-                throw new NotFoundException(ErrorCodes.Account.LOGIN_EMAIL_DOESNT_EXIST);    
+                throw new NotFoundException(ErrorCodes.Account.ACCOUNT_EMAIL_DOESNT_EXIST);    
             
             existingAccount.FullName = request.FullName;
             existingAccount.Email = request.Email;

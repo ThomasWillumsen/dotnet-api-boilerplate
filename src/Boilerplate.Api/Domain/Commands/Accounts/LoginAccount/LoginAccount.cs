@@ -36,7 +36,7 @@ public static class LoginAccount
                 .Include(x => x.Claims)
                 .FirstOrDefaultAsync(x => x.Email == request.Email);
             if (account == null)
-                throw new NotFoundException(ErrorCodes.Account.LOGIN_EMAIL_DOESNT_EXIST);
+                throw new NotFoundException(ErrorCodes.Account.ACCOUNT_EMAIL_DOESNT_EXIST);
 
             if (string.IsNullOrEmpty(account.Password))
                 throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_NOT_CREATED);

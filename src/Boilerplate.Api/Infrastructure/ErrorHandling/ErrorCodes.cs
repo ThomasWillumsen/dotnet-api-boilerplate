@@ -21,11 +21,11 @@ public static class ErrorCodes
     public static class Account
     {
         private static int accountRoot = errorRoot + 10000;
-        public static ErrorCode LOGIN_EMAIL_DOESNT_EXIST = new ErrorCode(accountRoot + 101, "The provided email doesnt exist");
         public static ErrorCode LOGIN_PASSWORD_NOT_CREATED = new ErrorCode(accountRoot + 102, "No login has been created for the provided email");
         public static ErrorCode LOGIN_PASSWORD_INVALID = new ErrorCode(accountRoot + 103, "The provided password is invalid");
         public static ErrorCode RESETPASSWORD_TOKEN_INVALID = new ErrorCode(accountRoot + 201, "The reset password token is invalid. Might have already been used");
         public static ErrorCode ACCOUNT_EMAIL_ALREADY_EXIST = new ErrorCode(accountRoot + 301, "The provided email already exists and cannot be used");
+        public static ErrorCode ACCOUNT_EMAIL_DOESNT_EXIST = new ErrorCode(accountRoot + 302, "The provided email doesnt exist");
     }
     #endregion
 }

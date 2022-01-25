@@ -3,6 +3,7 @@ using System.Threading;
 using Boilerplate.Api.Domain.Commands.Accounts;
 using Boilerplate.Api.Domain.Commands.Emails;
 using Boilerplate.Api.Infrastructure.Database;
+using Boilerplate.Api.Infrastructure.Database.Entities;
 using MediatR;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -11,27 +12,15 @@ using Xunit;
 
 namespace Boilerplate.Api.Tests.Domain.Commands.Accounts;
 
-public class CreateAccountTests : IDisposable
+public class CreateAccountTests : TestBase
 {
     private readonly IMediator _mockMediatr;
-    private readonly SqliteConnection _connection;
-    private readonly DbContextOptions<AppDbContext> _dbOptions;
+    private IRequestHandler<CreateAccount.Command, AccountEntity> _sut;
 
     public CreateAccountTests()
     {
         _mockMediatr = Substitute.For<IMediator>();
-        _connection = new SqliteConnection("Filename=:memory:");
-        _connection.Open();
-        _dbOptions = new DbContextOptionsBuilder<AppDbContext>().UseSqlite(_connection).Options;
-        using (var context = new AppDbContext(_dbOptions))
-        {
-            context.Database.EnsureCreated();
-        }
-    }
-
-    public void Dispose()
-    {
-        _connection.Dispose();
+        _sut = new CreateAccount.Handler(new AppDbContext(_dbOptions), _mockMediatr);
     }
 
     [Fact]
