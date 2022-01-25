@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Boilerplate.Api.Infrastructure.Database.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,33 @@ namespace Boilerplate.Api.Infrastructure.Database.Migrations
                     table.PrimaryKey("PK_EmailLogs", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AccountClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClaimType = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AccountClaims_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountClaims_AccountId",
+                table: "AccountClaims",
+                column: "AccountId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Email",
                 table: "Accounts",
@@ -62,10 +89,13 @@ namespace Boilerplate.Api.Infrastructure.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Accounts");
+                name: "AccountClaims");
 
             migrationBuilder.DropTable(
                 name: "EmailLogs");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
         }
     }
 }

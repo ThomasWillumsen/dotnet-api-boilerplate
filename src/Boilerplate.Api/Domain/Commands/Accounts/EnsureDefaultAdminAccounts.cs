@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts;
 
-public static class EnsureDefaultAccounts
+public static class EnsureDefaultAdminAccounts
 {
     public record Command() : IRequest;
 
@@ -32,10 +32,10 @@ public static class EnsureDefaultAccounts
         protected override async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var existingAccounts = await _dbContext.Accounts.Select(x => x.Email).ToListAsync();
-            foreach (var defaultAcc in _appSettings.DefaultAccounts)
+            foreach (var defaultAcc in _appSettings.DefaultAdminAccounts)
             {
                 if (!existingAccounts.Contains(defaultAcc.Email, StringComparer.InvariantCultureIgnoreCase))
-                    await _mediator.Send(new CreateAccount.Command(defaultAcc.FullName, defaultAcc.Email));
+                    await _mediator.Send(new CreateAccount.Command(defaultAcc.FullName, defaultAcc.Email, true));
             }
         }
     }

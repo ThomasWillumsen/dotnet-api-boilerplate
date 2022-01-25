@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Boilerplate.Api.Domain.Queries.Accounts;
 using System.Linq;
 using Boilerplate.Api.Domain.Commands.Accounts.LoginAccount;
+using Boilerplate.Api.Infrastructure.Authorization;
 
 namespace Boilerplate.Api.Controllers.Accounts;
 
@@ -29,20 +30,49 @@ public class AccountsController : ControllerBase
     /// <summary>
     /// Create a new account
     /// </summary>
-    [Authorize]
+    [Authorize(AuthPolicies.Admin)]
     [HttpPost(Name = nameof(CreateAccount))]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     public async Task<ActionResult<AccountResponse>> CreateAccount([FromBody] CreateAccountRequest body)
     {
-        var account = await _mediator.Send(new CreateAccount.Command(body.FullName, body.Email));
+        var account = await _mediator.Send(new CreateAccount.Command(body.FullName, body.Email, body.IsAdmin));
         return Created("", new AccountResponse(account));
+    }
+
+    /// <summary>
+    /// Update an existing account
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id}", Name = nameof(UpdateAccount))]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
+    public async Task<ActionResult<AccountResponse>> UpdateAccount(
+        [FromRoute] int id,
+        [FromBody] UpdateAccountRequest body)
+    {
+        var account = await _mediator.Send(new UpdateAccount.Command(id, body.FullName, body.Email));
+        return Ok(new AccountResponse(account));
+    }
+
+    /// <summary>
+    /// Update an account to have admin permissions
+    /// </summary>
+    [Authorize(AuthPolicies.Admin)]
+    [HttpPut("{id}/updateIsAdmin", Name = nameof(UpdateAccountIsAdmin))]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    public async Task<IActionResult> UpdateAccountIsAdmin(
+        [FromRoute] int id,
+        [FromBody] UpdateAccountIsAdminRequest body)
+    {
+        await _mediator.Send(new UpdateAccountIsAdmin.Command(id, body.IsAdmin));
+        return NoContent();
     }
 
     /// <summary>
     /// Get accounts
     /// </summary>
+    [Authorize(AuthPolicies.Admin)]
     [HttpGet(Name = nameof(GetAccounts))]
-    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<AccountResponse>> GetAccounts()
     {
         var accounts = await _mediator.Send(new GetAccounts.Query());

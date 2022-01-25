@@ -35,7 +35,13 @@ public static class AuthenticationExtensions
                 ClockSkew = TimeSpan.Zero
             };
         });
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(AuthPolicies.Admin, policy => 
+                policy.RequireAssertion(context => 
+                    context.User.HasClaim(c => 
+                        c.Type == CustomClaimTypes.IsAdmin)));
+        });
         return services;
     }
 }

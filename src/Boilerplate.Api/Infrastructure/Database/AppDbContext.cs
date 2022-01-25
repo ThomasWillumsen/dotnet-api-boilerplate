@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<AccountEntity> Accounts { get; set; }
+    public DbSet<AccountClaimEntity> AccountClaims { get; set; }
     public DbSet<EmailLogEntity> EmailLogs { get; set; }
 
     public override int SaveChanges() => SaveChangesAsync().Result;

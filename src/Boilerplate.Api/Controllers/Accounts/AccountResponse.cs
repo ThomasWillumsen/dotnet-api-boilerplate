@@ -8,14 +8,18 @@ public class AccountResponse
     public AccountResponse() { }
     public AccountResponse(AccountEntity model)
     {
+        Id = model.Id;
         Email = model.Email;
         FullName = model.FullName;
         CreatedDate = model.CreatedDate;
         LastModifiedDate = model.LastModifiedDate;
+        IsAdmin = model.HasAdminClaim();
     }
 
+    public int Id { get; set; }
     public string Email { get; set; }
     public string FullName { get; set; }
+    public bool IsAdmin { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime LastModifiedDate { get; set; }
 }

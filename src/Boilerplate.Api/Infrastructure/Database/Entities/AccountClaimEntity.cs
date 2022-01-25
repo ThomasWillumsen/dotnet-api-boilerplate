@@ -1,0 +1,25 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Boilerplate.Api.Infrastructure.Database.Entities;
+
+public class AccountClaimEntity : BaseEntity
+{
+    public AccountClaimEntity(ClaimTypeEnum claimType)
+    {
+        ClaimType = claimType;
+    }
+
+    public ClaimTypeEnum ClaimType { get; set; }
+
+    [Required]
+    public int AccountId { get; set; }
+    [Required]
+    public AccountEntity Account { get; set; }
+}
+
+public enum ClaimTypeEnum
+{
+    User,
+    Admin
+}

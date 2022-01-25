@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Boilerplate.Api.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220122155713_Init")]
-    partial class Init
+    [Migration("20220124224738_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,33 @@ namespace Boilerplate.Api.Infrastructure.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Boilerplate.Api.Infrastructure.Database.Entities.AccountClaimEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClaimType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("AccountClaims");
+                });
 
             modelBuilder.Entity("Boilerplate.Api.Infrastructure.Database.Entities.AccountEntity", b =>
                 {
@@ -96,6 +123,22 @@ namespace Boilerplate.Api.Infrastructure.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("EmailLogs");
+                });
+
+            modelBuilder.Entity("Boilerplate.Api.Infrastructure.Database.Entities.AccountClaimEntity", b =>
+                {
+                    b.HasOne("Boilerplate.Api.Infrastructure.Database.Entities.AccountEntity", "Account")
+                        .WithMany("Claims")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("Boilerplate.Api.Infrastructure.Database.Entities.AccountEntity", b =>
+                {
+                    b.Navigation("Claims");
                 });
 #pragma warning restore 612, 618
         }

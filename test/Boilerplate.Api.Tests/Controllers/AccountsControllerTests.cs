@@ -25,7 +25,9 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
     {
         // Arrange
         var email = "someemail@asd.com";
+        var updatedEmail = "someotheremail@asd.com";
         var fullName = "donald trump";
+        var updatedFullName = "kim jong un";
         var passwordFirst = "somepassword12312";
         HttpClient httpClient = null;
 
@@ -36,8 +38,10 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
             new CreateAccountRequest
             {
                 Email = email,
-                FullName = fullName
+                FullName = fullName,
+                IsAdmin = false
             }.ToHttpStringContent());
+        var account = await createAccountResponse.DeserializeHttpResponse<AccountResponse>();
 
         // 2. Update Password
         Guid? pwResetToken = null;
@@ -72,17 +76,39 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
                 Email = email
             }.ToHttpStringContent());
 
+        // 5. Update Account
+        httpClient = _factory.CreateNewHttpClient(true);
+        var updateAccountResponse = await httpClient.PutAsync($"/api/v1/accounts/{account.Id}",
+            new UpdateAccountRequest
+            {
+                Email = updatedEmail,
+                FullName = updatedFullName
+            }.ToHttpStringContent());
+
+        // 6. Update Account IsAdmin permissions
+        httpClient = _factory.CreateNewHttpClient(true);
+        var updateIsAdminResponse = await httpClient.PutAsync($"/api/v1/accounts/{account.Id}/updateIsAdmin",
+            new UpdateAccountIsAdminRequest
+            {
+                IsAdmin = true
+            }.ToHttpStringContent());
+
         // Assert
         Assert.Equal(HttpStatusCode.Created, createAccountResponse.StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, updatePasswordResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, resetPwResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, updateAccountResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, updateIsAdminResponse.StatusCode);
 
         using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
         {
-            var createdAccount = await appDbContext.Accounts.FirstAsync(x => x.Email == email);
-            Assert.Equal(fullName, createdAccount.FullName);
-            Assert.Equal(email, createdAccount.Email);
+            var createdAccount = await appDbContext.Accounts
+                .Include(x => x.Claims)
+                .FirstAsync(x => x.Id == account.Id);
+            Assert.Equal(updatedFullName, createdAccount.FullName);
+            Assert.Equal(updatedEmail, createdAccount.Email);
+            Assert.Equal(true, createdAccount.Claims.Count >= 2);
             Assert.NotNull(createdAccount.Password);
             Assert.NotNull(createdAccount.Salt);
 

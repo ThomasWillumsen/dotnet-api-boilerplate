@@ -27,7 +27,9 @@ public class CustomWebApplicationFactory<TStartup>
 
     public string GenerateJwtToken(AccountEntity account = null)
     {
-        var acc = new AccountEntity("Donald Trump", "donaltrump@gmail.com"); // will not be written to db. this is just a fake account object to create a token.
+        // will not be written to db. this is just a fake account object to create a token.
+        var acc = new AccountEntity("Donald Trump", "donaltrump@gmail.com");
+        acc.Claims.Add(new AccountClaimEntity(ClaimTypeEnum.Admin));
         var jwtTokenHelper = Services.CreateScope().ServiceProvider.GetService<IJwtTokenHelper>();
         var token = jwtTokenHelper.GenerateJwtToken(acc);
         return token;

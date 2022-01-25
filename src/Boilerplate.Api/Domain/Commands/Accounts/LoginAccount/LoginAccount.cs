@@ -6,8 +6,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Boilerplate.Api.Infrastructure.Authorization;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts.LoginAccount;
@@ -34,7 +32,9 @@ public static class LoginAccount
 
         public async Task<LoginAccountResult> Handle(Command request, CancellationToken cancellationToken)
         {
-            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var account = await _dbContext.Accounts
+                .Include(x => x.Claims)
+                .FirstOrDefaultAsync(x => x.Email == request.Email);
             if (account == null)
                 throw new NotFoundException(ErrorCodes.Account.LOGIN_EMAIL_DOESNT_EXIST);
 

@@ -40,6 +40,13 @@ public class JwtTokenHelper : IJwtTokenHelper
     {
         _logger.LogInformation("Generating jwt token for account {0}", account.Id);
 
+        var claims = new Dictionary<string, object>(){
+            {CustomClaimTypes.Email, account.Email},
+            {CustomClaimTypes.FullName, account.FullName}
+        };
+        if(account.HasAdminClaim())
+            claims.Add(CustomClaimTypes.IsAdmin, true);
+
         var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.JwtKey));
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -47,10 +54,7 @@ public class JwtTokenHelper : IJwtTokenHelper
         {
             Issuer = _authSettings.Issuer,
             Audience = _authSettings.Audience,
-            Claims = new Dictionary<string, object>(){
-                    {CustomClaimTypes.Email, account.Email},
-                    {CustomClaimTypes.FullName, account.FullName}
-                },
+            Claims = claims,
             NotBefore = DateTime.Now,
             Expires = DateTime.Now.AddSeconds(_authSettings.ExpirationInSeconds),
             SigningCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256)

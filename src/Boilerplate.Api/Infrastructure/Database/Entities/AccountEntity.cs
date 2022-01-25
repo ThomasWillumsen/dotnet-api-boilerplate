@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Boilerplate.Api.Infrastructure.Database.Entities;
 
@@ -9,6 +11,7 @@ public class AccountEntity : BaseEntity
     {
         FullName = fullName;
         Email = email;
+        Claims = new List<AccountClaimEntity>();
     }
 
     [Required]
@@ -18,4 +21,8 @@ public class AccountEntity : BaseEntity
     public string Password { get; set; }
     public byte[] Salt { get; set; }
     public Guid? ResetPasswordToken { get; set; }
+
+    public ICollection<AccountClaimEntity> Claims { get; set; }
+
+    public bool HasAdminClaim() => Claims.Any(x => x.ClaimType == ClaimTypeEnum.Admin);
 }
