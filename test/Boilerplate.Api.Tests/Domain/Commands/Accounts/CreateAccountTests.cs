@@ -30,8 +30,7 @@ public class CreateAccountTests : TestBase
         var command = new CreateAccount.Command("Donald Trump", "jhlk@asd.com", false);
 
         // Act
-        var sut = new CreateAccount.Handler(new AppDbContext(_dbOptions), _mockMediatr);
-        var account = await sut.Handle(command, default);
+        var account = await _sut.Handle(command, default);
 
         // Assert
         using (var context = new AppDbContext(_dbOptions))
@@ -54,8 +53,7 @@ public class CreateAccountTests : TestBase
         var command = new CreateAccount.Command("Donald Trump", "fhgddfgh@asd.com", false);
 
         // Act
-        var sut = new CreateAccount.Handler(new AppDbContext(_dbOptions), _mockMediatr);
-        var account = await sut.Handle(command, default);
+        var account = await _sut.Handle(command, default);
 
         // Assert
         await _mockMediatr.Received(1).Send(Arg.Any<SendResetPasswordMail.Command>(), Arg.Any<CancellationToken>());
