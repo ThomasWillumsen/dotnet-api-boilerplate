@@ -8,7 +8,7 @@ using Boilerplate.Api.Infrastructure.Database;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
 using Boilerplate.Api.Infrastructure.Authorization;
 
-namespace Boilerplate.Api.Domain.Commands.Accounts.LoginAccount;
+namespace Boilerplate.Api.Domain.Commands.Accounts;
 
 public static class LoginAccount
 {

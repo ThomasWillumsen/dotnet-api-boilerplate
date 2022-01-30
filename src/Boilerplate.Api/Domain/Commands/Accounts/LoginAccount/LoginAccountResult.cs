@@ -1,6 +1,6 @@
 using Boilerplate.Api.Infrastructure.Database.Entities;
 
-namespace Boilerplate.Api.Domain.Commands.Accounts.LoginAccount;
+namespace Boilerplate.Api.Domain.Commands.Accounts;
 
 public class LoginAccountResult
 {

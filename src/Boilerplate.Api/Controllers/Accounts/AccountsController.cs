@@ -6,7 +6,6 @@ using Boilerplate.Api.Domain.Commands.Accounts;
 using Microsoft.AspNetCore.Authorization;
 using Boilerplate.Api.Domain.Queries.Accounts;
 using System.Linq;
-using Boilerplate.Api.Domain.Commands.Accounts.LoginAccount;
 using Boilerplate.Api.Infrastructure.Authorization;
 
 namespace Boilerplate.Api.Controllers.Accounts;

@@ -11,7 +11,6 @@ namespace Boilerplate.Api.Tests.Domain.Commands.Accounts;
 
 public class UpdateAccountIsAdminTests : TestBase
 {
-    private readonly IMediator _mockMediatr;
     private IRequestHandler<UpdateAccountIsAdmin.Command, AccountEntity> _sut;
 
     public UpdateAccountIsAdminTests()
