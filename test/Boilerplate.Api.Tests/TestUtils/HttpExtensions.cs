@@ -16,7 +16,7 @@ public static class HttpExtensions
             "application/json");
     }
 
-    public static async Task<T> DeserializeHttpResponse<T>(this HttpResponseMessage httpResponseMessage)
+    public static async Task<T?> DeserializeHttpResponse<T>(this HttpResponseMessage httpResponseMessage)
     {
         var options = new JsonSerializerOptions
         {

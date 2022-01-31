@@ -11,7 +11,7 @@ public class SendGridMailDto
         Guid reference,
         EmailAddress from,
         EmailAddress to,
-        EmailAddress replyTo = null)
+        EmailAddress? replyTo = null)
     {
         TemplateId = templateId;
         TemplateData = templateData;
@@ -31,5 +31,5 @@ public class SendGridMailDto
     /// <summary>
     /// Optional
     /// </summary>
-    public EmailAddress ReplyTo { get; set; }
+    public EmailAddress? ReplyTo { get; set; }
 }

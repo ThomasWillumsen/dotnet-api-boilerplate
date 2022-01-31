@@ -19,9 +19,9 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<AccountEntity> Accounts { get; set; }
-    public DbSet<AccountClaimEntity> AccountClaims { get; set; }
-    public DbSet<EmailLogEntity> EmailLogs { get; set; }
+    public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
+    public DbSet<AccountClaimEntity> AccountClaims => Set<AccountClaimEntity>();
+    public DbSet<EmailLogEntity> EmailLogs => Set<EmailLogEntity>();
 
     public override int SaveChanges() => SaveChangesAsync().Result;
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))

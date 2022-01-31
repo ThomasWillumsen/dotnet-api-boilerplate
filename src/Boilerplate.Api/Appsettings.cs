@@ -1,5 +1,6 @@
 namespace Boilerplate.Api;
 
+#nullable disable
 public class Appsettings
 {
     public string ASPNETCORE_ENVIRONMENT { get; set; }

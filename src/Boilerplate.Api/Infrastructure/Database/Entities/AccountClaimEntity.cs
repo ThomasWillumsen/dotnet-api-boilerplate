@@ -15,7 +15,7 @@ public class AccountClaimEntity : BaseEntity
     [Required]
     public int AccountId { get; set; }
     [Required]
-    public AccountEntity Account { get; set; }
+    public AccountEntity Account { get; set; } = null!;
 }
 
 public enum ClaimTypeEnum

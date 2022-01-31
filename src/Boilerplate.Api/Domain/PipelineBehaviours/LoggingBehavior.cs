@@ -29,7 +29,7 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         finally
         {
             stopwatch.Stop();
-            var requestName = request.GetType().FullName.Split(".").Last();
+            var requestName = request.GetType().FullName!.Split(".").Last();
             _logger.LogInformation("{Request} finished in {Elapsed} ms", requestName, stopwatch.ElapsedMilliseconds);
         }
 

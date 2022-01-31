@@ -41,7 +41,7 @@ public static class LoginAccount
             if (string.IsNullOrEmpty(account.Password))
                 throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_NOT_CREATED);
 
-            if (_passwordService.VerifyPassword(request.Password, account.Salt, account.Password) == false)
+            if (_passwordService.VerifyPassword(request.Password, account.Salt!, account.Password) == false)
                 throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_INVALID);
 
             var token = _jwtTokenHelper.GenerateJwtToken(account);

@@ -34,7 +34,7 @@ public class SendGridController : ControllerBase
     public async Task<ActionResult> Post([FromBody] IEnumerable<SendGridWebhookEventRequest> body)
     {
         // sometimes events come in bulk, sometimes one by one. Always look for the latest
-        var latestEvent = body.MaxBy(x => x.Timestamp);
+        var latestEvent = body.MaxBy(x => x.Timestamp)!;
 
         var eventEnum = latestEvent.EventAsEnum;
         if(eventEnum == null)

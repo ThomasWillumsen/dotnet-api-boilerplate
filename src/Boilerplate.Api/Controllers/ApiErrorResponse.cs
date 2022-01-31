@@ -7,7 +7,7 @@ namespace Boilerplate.Api.Controllers;
 /// </summary>
 public class ApiErrorResponse
 {
-    public ApiErrorResponse(int errorCode, string errorMessage, ModelValidationError[] validationErrors = null)
+    public ApiErrorResponse(int errorCode, string errorMessage, ModelValidationError[]? validationErrors = null)
     {
         ErrorCode = errorCode;
         ErrorMessage = errorMessage;

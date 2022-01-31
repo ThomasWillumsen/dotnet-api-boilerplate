@@ -66,8 +66,8 @@ if (app.Environment.EnvironmentName != "Testing") // dont run this for integrati
 {
     using (var scope = app.Services.CreateScope())
     {
-        var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
-        var mediator = scope.ServiceProvider.GetService<IMediator>();
+        var dbContext = scope.ServiceProvider.GetService<AppDbContext>()!;
+        var mediator = scope.ServiceProvider.GetService<IMediator>()!;
         await dbContext.Database.MigrateAsync();
         await mediator.Send(new EnsureDefaultAdminAccounts.Command());
     }

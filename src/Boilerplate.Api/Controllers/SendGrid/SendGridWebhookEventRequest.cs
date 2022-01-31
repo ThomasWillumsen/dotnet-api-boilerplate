@@ -9,7 +9,7 @@ public class SendGridWebhookEventRequest
 {
     [Required]
     [JsonPropertyName("event")]
-    public string Event { get; set; }
+    public string Event { get; set; } = null!;
 
     public EmailEventEnum? EventAsEnum
     {

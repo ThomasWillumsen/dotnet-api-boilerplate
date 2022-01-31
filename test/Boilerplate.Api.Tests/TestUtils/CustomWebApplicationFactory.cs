@@ -25,12 +25,12 @@ public class CustomWebApplicationFactory<TStartup>
     {
     }
 
-    public string GenerateJwtToken(AccountEntity account = null)
+    public string GenerateJwtToken(AccountEntity? account = null)
     {
         // will not be written to db. this is just a fake account object to create a token.
         var acc = new AccountEntity("Donald Trump", "donaltrump@gmail.com");
         acc.Claims.Add(new AccountClaimEntity(ClaimTypeEnum.Admin));
-        var jwtTokenHelper = Services.CreateScope().ServiceProvider.GetService<IJwtTokenHelper>();
+        var jwtTokenHelper = Services.CreateScope().ServiceProvider.GetService<IJwtTokenHelper>()!;
         var token = jwtTokenHelper.GenerateJwtToken(acc);
         return token;
     }
@@ -51,9 +51,10 @@ public class CustomWebApplicationFactory<TStartup>
         builder.UseEnvironment("Testing");
         builder.ConfigureServices(services =>
         {
-                // Remove the app's ApplicationDbContext registration which happened during Startup.cs. Override it for testing.
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-            services.Remove(descriptor);
+            // Remove the app's ApplicationDbContext registration which happened during Startup.cs. Override it for testing.
+            var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+            if(descriptor != null)
+                services.Remove(descriptor);
 
             var dbName = Guid.NewGuid().ToString();
                 // Add ApplicationDbContext using an in-memory database for testing.

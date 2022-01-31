@@ -38,7 +38,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var responseObj = await response.DeserializeHttpResponse<AccountResponse>();
-        Assert.Equal(email, responseObj.Email);
+        Assert.Equal(email, responseObj?.Email);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
         // Arrange
         AccountEntity account;
         var resetPwToken = Guid.NewGuid();
-        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>()!)
         {
             account = new AccountEntity("donald trump", "fdgdfgdfs@asd.com"){
                 ResetPasswordToken = resetPwToken
@@ -76,9 +76,9 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
         // Arrange
         AccountEntity account;
         var password = "somepassword";
-        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>()!)
         {
-            var pwService = _factory.GetScopedServiceProvider().GetService<IPasswordService>();
+            var pwService = _factory.GetScopedServiceProvider().GetService<IPasswordService>()!;
             var pw = pwService.EncryptPassword(password);
             account = new AccountEntity("donald trump", "6345dfsg@asd.com"){
                 Password = pw.Hash,
@@ -101,7 +101,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var responseObj = await response.DeserializeHttpResponse<LoginResponse>();
-        Assert.NotNull(responseObj.Jwt);
+        Assert.NotNull(responseObj?.Jwt);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
     {
         // Arrange
         AccountEntity account;
-        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>()!)
         {
             account = new AccountEntity("donald trump", "dfsgsfdgdf@asd.com");
             appDbContext.Accounts.Add(account);
@@ -134,7 +134,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
     {
         // Arrange
         AccountEntity account;
-        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>()!)
         {
             account = new AccountEntity("donald trump", "324141324@asd.com");
             appDbContext.Accounts.Add(account);
@@ -154,7 +154,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var responseObj = await response.DeserializeHttpResponse<AccountResponse>();
-        Assert.Equal(account.Id, responseObj.Id);
+        Assert.Equal(account.Id, responseObj?.Id);
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
     {
         // Arrange
         AccountEntity account;
-        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>())
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>()!)
         {
             account = new AccountEntity("donald trump", "sdfgsdfgdsf@asd.com");
             appDbContext.Accounts.Add(account);

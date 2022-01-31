@@ -25,7 +25,7 @@ public static class ModelStateValidationBehaviour
                     ErrorCodes.VALIDATION.Code,
                     ErrorCodes.VALIDATION.Message,
                     context.ModelState.Keys
-                        .SelectMany(key => context.ModelState[key].Errors
+                        .SelectMany(key => context.ModelState[key]!.Errors
                             .Select(x => new ModelValidationError(key, x.ErrorMessage)))
                         .ToArray());
 
