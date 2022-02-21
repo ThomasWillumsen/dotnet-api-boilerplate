@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Threading.Tasks;
 using MediatR;
 using Boilerplate.Api.Domain.Commands.Accounts;
 using Microsoft.AspNetCore.Authorization;
 using Boilerplate.Api.Domain.Queries.Accounts;
-using System.Linq;
 using Boilerplate.Api.Infrastructure.Authorization;
+using Boilerplate.Api.Infrastructure.Swagger;
+using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Controllers.Accounts;
 
@@ -14,8 +14,6 @@ namespace Boilerplate.Api.Controllers.Accounts;
 /// Accounts API
 /// </summary>
 [Route("api/v1/[controller]")]
-[Produces("application/json")]
-[Consumes("application/json")]
 [ApiController]
 public class AccountsController : ControllerBase
 {
@@ -31,7 +29,10 @@ public class AccountsController : ControllerBase
     /// </summary>
     [Authorize(AuthPolicies.Admin)]
     [HttpPost(Name = nameof(CreateAccount))]
+    [Produces("application/json")]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.Created)]
+    [SwaggerErrorCodes(HttpStatusCode.Conflict, ErrorCodesEnum.ACCOUNT_EMAIL_ALREADY_EXIST)]
     public async Task<ActionResult<AccountResponse>> CreateAccount([FromBody] CreateAccountRequest body)
     {
         var account = await _mediator.Send(new CreateAccount.Command(body.FullName, body.Email, body.IsAdmin));
@@ -43,7 +44,11 @@ public class AccountsController : ControllerBase
     /// </summary>
     [Authorize]
     [HttpPut("{id}", Name = nameof(UpdateAccount))]
+    [Produces("application/json")]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.Created)]
+    [SwaggerErrorCodes(HttpStatusCode.NotFound, ErrorCodesEnum.ACCOUNT_ID_DOESNT_EXIST)]
+    [SwaggerErrorCodes(HttpStatusCode.Conflict, ErrorCodesEnum.ACCOUNT_EMAIL_ALREADY_EXIST)]
     public async Task<ActionResult<AccountResponse>> UpdateAccount(
         [FromRoute] int id,
         [FromBody] UpdateAccountRequest body)
@@ -57,7 +62,9 @@ public class AccountsController : ControllerBase
     /// </summary>
     [Authorize(AuthPolicies.Admin)]
     [HttpPut("{id}/updateIsAdmin", Name = nameof(UpdateAccountIsAdmin))]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [SwaggerErrorCodes(HttpStatusCode.NotFound, ErrorCodesEnum.ACCOUNT_ID_DOESNT_EXIST)]
     public async Task<IActionResult> UpdateAccountIsAdmin(
         [FromRoute] int id,
         [FromBody] UpdateAccountIsAdminRequest body)
@@ -71,6 +78,7 @@ public class AccountsController : ControllerBase
     /// </summary>
     [Authorize(AuthPolicies.Admin)]
     [HttpGet(Name = nameof(GetAccounts))]
+    [Produces("application/json")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<AccountResponse>> GetAccounts()
     {
@@ -83,7 +91,11 @@ public class AccountsController : ControllerBase
     /// </summary>
     /// <remarks>Returns a jwt token to be used with bearer authentication</remarks>
     [HttpPost("login", Name = nameof(LoginAccount))]
+    [Produces("application/json")]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
+    [SwaggerErrorCodes(HttpStatusCode.NotFound, ErrorCodesEnum.ACCOUNT_EMAIL_DOESNT_EXIST)]
+    [SwaggerErrorCodes(HttpStatusCode.UnprocessableEntity, ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_NOT_CREATED, ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_INVALID)]
     public async Task<ActionResult<LoginResponse>> LoginAccount([FromBody] LoginAccountRequest body)
     {
         var loginResult = await _mediator.Send(new LoginAccount.Command(body.Email, body.Password));
@@ -95,7 +107,9 @@ public class AccountsController : ControllerBase
     /// </summary>
     /// <remarks>An email will be sent to the owner with a password token to use when updating the password.</remarks>
     [HttpPost("resetPassword", Name = nameof(ResetAccountPassword))]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [SwaggerErrorCodes(HttpStatusCode.NotFound, ErrorCodesEnum.ACCOUNT_EMAIL_DOESNT_EXIST)]
     public async Task<IActionResult> ResetAccountPassword([FromBody] ResetAccountPasswordRequest body)
     {
         await _mediator.Send(new ResetAccountPassword.Command(body.Email));
@@ -106,7 +120,9 @@ public class AccountsController : ControllerBase
     /// Update the password of an account using the token from the reset password email.
     /// </summary>
     [HttpPut("updatePassword", Name = nameof(UpdateAccountPassword))]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [SwaggerErrorCodes(HttpStatusCode.UnprocessableEntity, ErrorCodesEnum.ACCOUNT_RESETPASSWORD_TOKEN_INVALID)]
     public async Task<IActionResult> UpdateAccountPassword([FromBody] UpdateAccountPasswordRequest body)
     {
         await _mediator.Send(new UpdateAccountPassword.Command(body.ResetPasswordToken, body.Password));

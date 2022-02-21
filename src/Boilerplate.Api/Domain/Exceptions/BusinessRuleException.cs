@@ -9,17 +9,12 @@ namespace Boilerplate.Api.Domain.Exceptions;
 /// </summary>
 public class BusinessRuleException : Exception
 {
-    public BusinessRuleException(ErrorCode errorCode)
-    {
-        ErrorCode = errorCode.Code;
-        ErrorMessage = errorCode.Message;
-    }
-    public BusinessRuleException(int errorCode, string errorMessage)
+    public BusinessRuleException(ErrorCodesEnum errorCode, params string[] messageParams)
     {
         ErrorCode = errorCode;
-        ErrorMessage = errorMessage;
+        MessageParams = messageParams;
     }
 
-    public int ErrorCode { get; set; }
-    public string ErrorMessage { get; set; }
+    public ErrorCodesEnum ErrorCode { get; set; }
+    public string[] MessageParams { get; set; }
 }

@@ -8,9 +8,7 @@ namespace Boilerplate.Api.Domain.Exceptions;
 /// </summary>
 public class BadFormatException : BusinessRuleException
 {
-    public BadFormatException(string propertyName) : base(
-        ErrorCodes.PROPERTY_BAD_FORMAT.Code,
-        string.Format(ErrorCodes.PROPERTY_BAD_FORMAT.Message, propertyName))
-    {
-    }
+    public BadFormatException(string propertyName) 
+        : base(ErrorCodesEnum.GENERIC_PROPERTY_BAD_FORMAT, propertyName)
+    {}
 }

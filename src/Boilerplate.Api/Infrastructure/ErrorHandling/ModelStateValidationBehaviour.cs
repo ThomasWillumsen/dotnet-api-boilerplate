@@ -1,8 +1,5 @@
 using Boilerplate.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -22,8 +19,7 @@ public static class ModelStateValidationBehaviour
             options.InvalidModelStateResponseFactory = context =>
             {
                 var errorResponse = new ApiErrorResponse(
-                    ErrorCodes.VALIDATION.Code,
-                    ErrorCodes.VALIDATION.Message,
+                    ErrorCodesEnum.GENERIC_VALIDATION,
                     context.ModelState.Keys
                         .SelectMany(key => context.ModelState[key]!.Errors
                             .Select(x => new ModelValidationError(key, x.ErrorMessage)))

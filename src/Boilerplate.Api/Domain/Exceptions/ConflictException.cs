@@ -9,7 +9,7 @@ namespace Boilerplate.Api.Domain.Exceptions;
 /// </summary>
 public class ConflictException : BusinessRuleException
 {
-    public ConflictException(ErrorCode errorCode) : base(errorCode)
+    public ConflictException(ErrorCodesEnum errorCode) : base(errorCode)
     {
     }
 }

@@ -1,14 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Boilerplate.Api.Domain.Commands.Accounts;
 using Boilerplate.Api.Infrastructure.Database;
-using Microsoft.AspNetCore.Builder;
 using Boilerplate.Api.Domain.Services;
 using SendGrid;
 using Boilerplate.Api.Infrastructure.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Boilerplate.Api.Infrastructure;
 using System.Text.Json.Serialization;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
@@ -69,7 +65,7 @@ if (app.Environment.EnvironmentName != "Testing") // dont run this for integrati
         var dbContext = scope.ServiceProvider.GetService<AppDbContext>()!;
         var mediator = scope.ServiceProvider.GetService<IMediator>()!;
         await dbContext.Database.MigrateAsync();
-        await mediator.Send(new EnsureDefaultAdminAccounts.Command());
+        // await mediator.Send(new EnsureDefaultAdminAccounts.Command());
     }
 }
 

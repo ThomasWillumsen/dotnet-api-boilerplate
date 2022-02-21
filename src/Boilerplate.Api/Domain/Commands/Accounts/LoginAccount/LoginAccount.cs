@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Boilerplate.Api.Domain.Services;
 using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
@@ -36,13 +34,13 @@ public static class LoginAccount
                 .Include(x => x.Claims)
                 .FirstOrDefaultAsync(x => x.Email == request.Email);
             if (account == null)
-                throw new NotFoundException(ErrorCodes.Account.ACCOUNT_EMAIL_DOESNT_EXIST);
+                throw new NotFoundException(ErrorCodesEnum.ACCOUNT_EMAIL_DOESNT_EXIST);
 
             if (string.IsNullOrEmpty(account.Password))
-                throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_NOT_CREATED);
+                throw new BusinessRuleException(ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_NOT_CREATED);
 
             if (_passwordService.VerifyPassword(request.Password, account.Salt!, account.Password) == false)
-                throw new BusinessRuleException(ErrorCodes.Account.LOGIN_PASSWORD_INVALID);
+                throw new BusinessRuleException(ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_INVALID);
 
             var token = _jwtTokenHelper.GenerateJwtToken(account);
             return new LoginAccountResult(account, token);

@@ -3,11 +3,9 @@ using Boilerplate.Api.Infrastructure.Database.Entities;
 
 namespace Boilerplate.Api.Controllers.Accounts;
 
-public class AccountResponse
+public class AccountResponse : BaseResponse
 {
-    #pragma warning disable CS8618
     public AccountResponse() { }
-    #pragma warning restore CS8618
     public AccountResponse(AccountEntity model)
     {
         Id = model.Id;
@@ -19,7 +17,7 @@ public class AccountResponse
     }
 
     public int Id { get; set; }
-    public string Email { get; set; }
+    public string Email { get; set; } = null!;
     public string? FullName { get; set; }
     public bool IsAdmin { get; set; }
     public DateTime CreatedDate { get; set; }

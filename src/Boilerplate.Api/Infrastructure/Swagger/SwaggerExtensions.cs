@@ -1,8 +1,4 @@
-using System;
-using System.IO;
 using System.Reflection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 namespace Boilerplate.Api.Infrastructure.Swagger;
@@ -16,6 +12,8 @@ public static class SwaggerExtensions
     {
         services.AddSwaggerGen(c =>
         {
+            c.SupportNonNullableReferenceTypes();
+
             c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
             {
                 Title = "Boilerplate API",
@@ -45,10 +43,12 @@ public static class SwaggerExtensions
                     }
             });
 
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            // Set the comments path for the Swagger JSON and UI.
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath, true);
+            c.SchemaFilter<ResponseModelsRequiredPropertiesSchemaFilter>();
+            c.OperationFilter<ErrorCodesResponseOperationFilter>();
         });
 
         return services;

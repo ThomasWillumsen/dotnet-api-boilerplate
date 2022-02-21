@@ -34,7 +34,7 @@ public static class UpdateAccount
                 .Include(x => x.Claims)
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
             if(existingAccount == null)
-                throw new NotFoundException(ErrorCodes.Account.ACCOUNT_EMAIL_DOESNT_EXIST);    
+                throw new NotFoundException(ErrorCodesEnum.ACCOUNT_ID_DOESNT_EXIST);    
             
             existingAccount.FullName = request.FullName;
             existingAccount.Email = request.Email;
@@ -47,7 +47,7 @@ public static class UpdateAccount
             {
                 if (e.InnerException is SqlException sqlEx &&
                     sqlEx.Number == 2601)
-                    throw new ConflictException(ErrorCodes.Account.ACCOUNT_EMAIL_ALREADY_EXIST);
+                    throw new ConflictException(ErrorCodesEnum.ACCOUNT_EMAIL_ALREADY_EXIST);
 
                 throw;
             }

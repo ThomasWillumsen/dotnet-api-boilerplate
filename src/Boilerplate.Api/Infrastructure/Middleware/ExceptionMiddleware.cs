@@ -39,35 +39,35 @@ public class ExceptionMiddleware
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var httpStatusCode = HttpStatusCode.InternalServerError;
-        var errorCode = ErrorCodes.INTERNAL.Code;
-        var errorMessage = ErrorCodes.INTERNAL.Message;
+        var errorCode = ErrorCodesEnum.GENERIC_INTERNAL;
+        var messageParams = new string[0];
 
-        if (exception is BusinessRuleException brEx)
-        {
-            httpStatusCode = HttpStatusCode.UnprocessableEntity;
-            errorCode = brEx.ErrorCode;
-            errorMessage = brEx.ErrorMessage;
-        }
-        else if (exception is NotFoundException nfEx)
+        
+        if (exception is NotFoundException nfEx)
         {
             httpStatusCode = HttpStatusCode.NotFound;
             errorCode = nfEx.ErrorCode;
-            errorMessage = nfEx.Message;
         }
         else if (exception is ConflictException cEx)
         {
             httpStatusCode = HttpStatusCode.Conflict;
             errorCode = cEx.ErrorCode;
-            errorMessage = cEx.Message;
         }
         else if (exception is BadFormatException bfEx)
         {
             httpStatusCode = HttpStatusCode.BadRequest;
             errorCode = bfEx.ErrorCode;
-            errorMessage = bfEx.Message;
+        }
+        else if (exception is BusinessRuleException brEx)
+        {
+            httpStatusCode = HttpStatusCode.UnprocessableEntity;
+            errorCode = brEx.ErrorCode;
         }
 
-        var errorResponse = new ApiErrorResponse(errorCode, errorMessage);
+        if(exception is BusinessRuleException brEx2)
+            messageParams = brEx2.MessageParams;
+
+        var errorResponse = new ApiErrorResponse(errorCode, messageParams);
         var serializedResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

@@ -1,8 +1,4 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Boilerplate.Api.Infrastructure.Database.Entities;
-using Boilerplate.Api.Domain.Services;
 using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +45,7 @@ public static class CreateAccount
             {
                 if (e.InnerException is SqlException sqlEx &&
                     sqlEx.Number == 2601)
-                    throw new ConflictException(ErrorCodes.Account.ACCOUNT_EMAIL_ALREADY_EXIST);
+                    throw new ConflictException(ErrorCodesEnum.ACCOUNT_EMAIL_ALREADY_EXIST);
 
                 throw;
             }

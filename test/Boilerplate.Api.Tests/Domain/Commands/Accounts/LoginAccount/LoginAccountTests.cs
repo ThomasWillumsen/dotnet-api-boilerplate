@@ -53,7 +53,7 @@ public class LoginAccountTests : TestBase
 
         // Assert
         Assert.IsType<BusinessRuleException>(exception);
-        Assert.Equal(ErrorCodes.Account.LOGIN_PASSWORD_NOT_CREATED.Code, ((BusinessRuleException)exception).ErrorCode);
+        Assert.Equal(ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_NOT_CREATED, ((BusinessRuleException)exception).ErrorCode);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class LoginAccountTests : TestBase
 
         // Assert
         Assert.IsType<BusinessRuleException>(exception);
-        Assert.Equal(ErrorCodes.Account.LOGIN_PASSWORD_INVALID.Code, ((BusinessRuleException)exception).ErrorCode);
+        Assert.Equal(ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_INVALID, ((BusinessRuleException)exception).ErrorCode);
     }
 
     [Fact]

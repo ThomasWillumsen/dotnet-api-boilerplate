@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Threading.Tasks;
 using MediatR;
-using System.Collections.Generic;
-using System.Linq;
 using Boilerplate.Api.Domain.Commands.Emails;
 
 namespace Boilerplate.Api.Controllers.SendGrid;
@@ -12,8 +9,6 @@ namespace Boilerplate.Api.Controllers.SendGrid;
 /// SendGrid Webhooks
 /// </summary>
 [Route("api/v1/[controller]")]
-[Produces("application/json")]
-[Consumes("application/json")]
 [ApiController]
 public class SendGridController : ControllerBase
 {
@@ -30,6 +25,7 @@ public class SendGridController : ControllerBase
     /// </summary>
     [HttpPost]
     [SendGridAuthorization]
+    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult> Post([FromBody] IEnumerable<SendGridWebhookEventRequest> body)
     {
@@ -37,9 +33,9 @@ public class SendGridController : ControllerBase
         var latestEvent = body.MaxBy(x => x.Timestamp)!;
 
         var eventEnum = latestEvent.EventAsEnum;
-        if(eventEnum == null)
+        if (eventEnum == null)
             return Ok(); // not something we are tracking.
-        
+
         var account = await _mediator.Send(new UpdateEmailLog.Command(latestEvent.Reference, eventEnum.Value));
         return Ok();
     }

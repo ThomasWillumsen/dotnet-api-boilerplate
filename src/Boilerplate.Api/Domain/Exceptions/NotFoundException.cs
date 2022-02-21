@@ -1,4 +1,3 @@
-using System;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
 
 namespace Boilerplate.Api.Domain.Exceptions;
@@ -9,7 +8,7 @@ namespace Boilerplate.Api.Domain.Exceptions;
 /// </summary>
 public class NotFoundException : BusinessRuleException
 {
-    public NotFoundException(ErrorCode errorCode) : base(errorCode)
+    public NotFoundException(ErrorCodesEnum errorCode) : base(errorCode)
     {
     }
 }

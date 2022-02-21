@@ -29,7 +29,7 @@ public static class UpdateAccountPassword
         {
             var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.ResetPasswordToken == request.ResetPasswordToken);
             if (account == null)
-                throw new BusinessRuleException(ErrorCodes.Account.RESETPASSWORD_TOKEN_INVALID);
+                throw new BusinessRuleException(ErrorCodesEnum.ACCOUNT_RESETPASSWORD_TOKEN_INVALID);
 
             var hashSalt = _passwordService.EncryptPassword(request.Password);
             account.Password = hashSalt.Hash;

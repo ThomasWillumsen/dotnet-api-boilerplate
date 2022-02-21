@@ -31,7 +31,7 @@ public static class UpdateAccountIsAdmin
                 .Include(x => x.Claims)
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
             if(existingAccount == null)
-                throw new NotFoundException(ErrorCodes.Account.ACCOUNT_EMAIL_DOESNT_EXIST);    
+                throw new NotFoundException(ErrorCodesEnum.ACCOUNT_ID_DOESNT_EXIST);    
             
             var existingAdminClaim = existingAccount.Claims.FirstOrDefault(x => x.ClaimType == ClaimTypeEnum.Admin);
 
