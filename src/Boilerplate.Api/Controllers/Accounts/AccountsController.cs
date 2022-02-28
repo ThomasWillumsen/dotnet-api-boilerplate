@@ -138,7 +138,7 @@ public class AccountsController : ControllerBase
     }
 
     /// <summary>
-    /// Delete account. Related accounts will also be deleted
+    /// Delete account.
     /// </summary>
     [Authorize(AuthPolicies.Admin)]
     [HttpDelete("{id}", Name = nameof(DeleteAccount))]
