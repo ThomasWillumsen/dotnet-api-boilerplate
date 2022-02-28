@@ -21,16 +21,14 @@ public enum ErrorCodesEnum
     GENERIC_PROPERTY_BAD_FORMAT = 105000,
 
     // ==== Account 10000-20000 ============
-    [Description("Account id does not exist")]
-    ACCOUNT_ID_DOESNT_EXIST = 20101,
-    [Description("No login has been created for the provided email")]
-    ACCOUNT_LOGIN_PASSWORD_NOT_CREATED = 20102,
-    [Description("The provided password is invalid")]
-    ACCOUNT_LOGIN_PASSWORD_INVALID = 20103,
+    [Description("The provided email or password is incorrect")]
+    ACCOUNT_LOGIN_EMAIL_OR_PASSWORD_INVALID = 10101,
     [Description("The reset password token is invalid. Might have already been used")]
-    ACCOUNT_RESETPASSWORD_TOKEN_INVALID = 20201,
+    ACCOUNT_RESETPASSWORD_TOKEN_INVALID = 10201,
     [Description("The provided email already exists and cannot be used")]
-    ACCOUNT_EMAIL_ALREADY_EXIST = 20301,
-    [Description("The provided email doesnt exist")]
-    ACCOUNT_EMAIL_DOESNT_EXIST = 20302
+    ACCOUNT_EMAIL_ALREADY_EXIST = 10301,
+    [Description("The provided email does not exist")]
+    ACCOUNT_EMAIL_DOESNT_EXIST = 10302,
+    [Description("The account doesn't exist")]
+    ACCOUNT_ID_DOESNT_EXIST = 10303,
 }

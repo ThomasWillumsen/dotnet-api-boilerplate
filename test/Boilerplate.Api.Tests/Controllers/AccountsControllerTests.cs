@@ -180,4 +180,24 @@ public class AccountsControllerTests : IClassFixture<CustomWebApplicationFactory
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
+
+    [Fact]
+    public async Task DeleteAccount_Returns204()
+    {
+        // Arrange
+        AccountEntity account;
+        using (var appDbContext = _factory.GetScopedServiceProvider().GetService<AppDbContext>()!)
+        {
+            account = new AccountEntity("donald trump", "sdfgsdfgdsf@asd.com");
+            appDbContext.Accounts.Add(account);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        // Act
+        var httpClient = _factory.CreateNewHttpClient(true);
+        var response = await httpClient.DeleteAsync($"/api/v1/accounts/{account.Id}/");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
 }

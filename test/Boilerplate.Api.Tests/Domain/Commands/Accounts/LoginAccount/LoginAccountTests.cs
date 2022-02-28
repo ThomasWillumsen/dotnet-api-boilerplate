@@ -25,7 +25,7 @@ public class LoginAccountTests : TestBase
     }
 
     [Fact]
-    public async void LoginAccount_ThrowsNotFoundException_WhenEmailDoesntExist()
+    public async void LoginAccount_ThrowsBusinessRuleException_WhenEmailDoesntExist()
     {
         // Arrange
         var command = new LoginAccount.Command("asdasd@gmail.com", "somepass");
@@ -34,7 +34,7 @@ public class LoginAccountTests : TestBase
         var exception = await Record.ExceptionAsync(async () => await _sut.Handle(command, default));
 
         // Assert
-        Assert.IsType<NotFoundException>(exception);
+        Assert.IsType<BusinessRuleException>(exception);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class LoginAccountTests : TestBase
 
         // Assert
         Assert.IsType<BusinessRuleException>(exception);
-        Assert.Equal(ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_NOT_CREATED, ((BusinessRuleException)exception).ErrorCode);
+        Assert.Equal(ErrorCodesEnum.ACCOUNT_LOGIN_EMAIL_OR_PASSWORD_INVALID, ((BusinessRuleException)exception).ErrorCode);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class LoginAccountTests : TestBase
 
         // Assert
         Assert.IsType<BusinessRuleException>(exception);
-        Assert.Equal(ErrorCodesEnum.ACCOUNT_LOGIN_PASSWORD_INVALID, ((BusinessRuleException)exception).ErrorCode);
+        Assert.Equal(ErrorCodesEnum.ACCOUNT_LOGIN_EMAIL_OR_PASSWORD_INVALID, ((BusinessRuleException)exception).ErrorCode);
     }
 
     [Fact]
