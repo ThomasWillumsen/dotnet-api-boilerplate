@@ -9,6 +9,8 @@ namespace Boilerplate.Api.Controllers.SendGrid;
 /// SendGrid Webhooks
 /// </summary>
 [Route("api/v1/[controller]")]
+[Produces("application/json")]
+[Consumes("application/json")]
 [ApiController]
 public class SendGridController : ControllerBase
 {
@@ -25,7 +27,6 @@ public class SendGridController : ControllerBase
     /// </summary>
     [HttpPost]
     [SendGridAuthorization]
-    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult> Post([FromBody] IEnumerable<SendGridWebhookEventRequest> body)
     {
@@ -36,7 +37,7 @@ public class SendGridController : ControllerBase
         if (eventEnum == null)
             return Ok(); // not something we are tracking.
 
-        var account = await _mediator.Send(new UpdateEmailLog.Command(latestEvent.Reference, eventEnum.Value));
+        await _mediator.Send(new UpdateEmailLog.Command(latestEvent.Reference, eventEnum.Value));
         return Ok();
     }
 }

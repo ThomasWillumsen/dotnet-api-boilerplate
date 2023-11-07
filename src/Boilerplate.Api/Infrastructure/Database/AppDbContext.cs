@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Boilerplate.Api.Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 

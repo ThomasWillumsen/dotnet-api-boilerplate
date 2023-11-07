@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Boilerplate.Api.Infrastructure.Database.Entities;

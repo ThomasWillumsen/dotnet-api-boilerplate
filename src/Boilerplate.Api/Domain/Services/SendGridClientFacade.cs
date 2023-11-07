@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using Boilerplate.Api.Infrastructure.Database.Entities;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -26,7 +23,6 @@ public class SendGridClientFacade : ISendGridClientFacade
 
     public async Task SendEmail(SendGridMailDto mailDto)
     {
-        await Task.Run(() => {});
         var msg = new SendGridMessage();
         msg.AddTo(mailDto.To.Email, mailDto.To.Name);
         if (mailDto.ReplyTo != null)

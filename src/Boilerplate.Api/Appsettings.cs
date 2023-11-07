@@ -37,7 +37,12 @@ public class SendGridSettings
     /// <summary>
     /// Template id from a custom template in SendGrid
     /// </summary>
-    public string ResetPasswordTemplateId { get; set; }
+    public string CreateNewPasswordTemplateId { get; set; }
+
+    /// <summary>
+    /// Link to the frontend for creating a new password
+    /// </summary>
+    public string CreateNewPasswordLink { get; set; }
 }
 
 public class AuthorizationSettings

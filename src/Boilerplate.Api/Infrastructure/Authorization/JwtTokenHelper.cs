@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Text;
 using Boilerplate.Api.Infrastructure.Database.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -44,7 +39,7 @@ public class JwtTokenHelper : IJwtTokenHelper
             {CustomClaimTypes.Email, account.Email},
             {CustomClaimTypes.FullName, account.FullName}
         };
-        if(account.HasAdminClaim())
+        if (account.HasAdminClaim())
             claims.Add(CustomClaimTypes.IsAdmin, true);
 
         var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.JwtKey));

@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Boilerplate.Api.Infrastructure.Database;
 using Boilerplate.Api.Infrastructure.Database.Entities;
@@ -12,7 +9,7 @@ public static class UpdateEmailLog
 {
     public record Command(Guid reference, EmailEventEnum emailEvent) : IRequest;
 
-    public class Handler : MediatR.AsyncRequestHandler<Command>
+    public class Handler : IRequestHandler<Command>
     {
         private readonly AppDbContext _dbContext;
 
@@ -21,10 +18,10 @@ public static class UpdateEmailLog
             _dbContext = dbContext;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var emailLog = await _dbContext.EmailLogs.FirstOrDefaultAsync(x => x.Reference == request.reference);
-            if(emailLog == null)
+            if (emailLog == null)
                 throw new Exception($"No email log with reference {request.reference} was found");
 
             emailLog.Event = request.emailEvent;

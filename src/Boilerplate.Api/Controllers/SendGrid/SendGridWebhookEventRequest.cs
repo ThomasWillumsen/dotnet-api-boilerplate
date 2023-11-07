@@ -15,7 +15,7 @@ public class SendGridWebhookEventRequest
     {
         get
         {
-            if(!Enum.TryParse<EmailEventEnum>(Event, true, out EmailEventEnum parsed))
+            if(!Enum.TryParse(Event, true, out EmailEventEnum parsed))
                 return null;
 
             return parsed;

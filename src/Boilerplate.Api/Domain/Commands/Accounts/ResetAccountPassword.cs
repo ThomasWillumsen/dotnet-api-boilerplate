@@ -1,7 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Boilerplate.Api.Domain.Services;
 using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +11,7 @@ public static class ResetAccountPassword
 {
     public record Command(string Email) : IRequest;
 
-    public class Handler : AsyncRequestHandler<Command>
+    public class Handler : IRequestHandler<Command>
     {
         private readonly AppDbContext _dbContext;
         private readonly IMediator _mediator;
@@ -28,7 +24,7 @@ public static class ResetAccountPassword
             _mediator = mediator;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (account == null)

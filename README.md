@@ -66,12 +66,12 @@ Install the EF global tool:
 dotnet tool install --global dotnet-ef
 ```
 
-To add new migrations
+To add new migrations run the following command from the root of the project: 
 
 ```sh
-cd ./src/Boilerplate.Api/
-dotnet ef migrations add MyMigrationName -o ./Infrastructure/Database/Migrations
+dotnet ef migrations add Init --startup-project ./src/Boilerplate.Api --project ./src/Boilerplate.Api -o ./Infrastructure/Database/Migrations
 ```
+
 
 ### Run the app
 

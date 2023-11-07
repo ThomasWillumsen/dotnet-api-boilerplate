@@ -10,7 +10,7 @@ public static class DeleteAccount
 {
     public record Command(int Id) : IRequest;
 
-    public class Handler : AsyncRequestHandler<Command>
+    public class Handler : IRequestHandler<Command>
     {
         private readonly AppDbContext _dbContext;
 
@@ -19,7 +19,7 @@ public static class DeleteAccount
             _dbContext = dbContext;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var existingAccount = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Id == request.Id);
             if(existingAccount == null)

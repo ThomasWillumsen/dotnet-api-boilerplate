@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using EllipticCurve;
-using System.IO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Boilerplate.Api.Controllers.SendGrid;
 

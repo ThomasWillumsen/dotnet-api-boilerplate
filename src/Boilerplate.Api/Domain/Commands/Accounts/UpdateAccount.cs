@@ -1,12 +1,10 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Boilerplate.Api.Infrastructure.Database.Entities;
 using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
-using Microsoft.Data.SqlClient;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
+using MySqlConnector;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts;
 
@@ -33,9 +31,9 @@ public static class UpdateAccount
             var existingAccount = await _dbContext.Accounts
                 .Include(x => x.Claims)
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
-            if(existingAccount == null)
-                throw new NotFoundException(ErrorCodesEnum.ACCOUNT_ID_DOESNT_EXIST);    
-            
+            if (existingAccount == null)
+                throw new NotFoundException(ErrorCodesEnum.ACCOUNT_ID_DOESNT_EXIST);
+
             existingAccount.FullName = request.FullName;
             existingAccount.Email = request.Email;
 
@@ -45,8 +43,8 @@ public static class UpdateAccount
             }
             catch (DbUpdateException e)
             {
-                if (e.InnerException is SqlException sqlEx &&
-                    sqlEx.Number == 2601)
+                if (e.InnerException is MySqlException mysqlEx &&
+                    mysqlEx.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
                     throw new ConflictException(ErrorCodesEnum.ACCOUNT_EMAIL_ALREADY_EXIST);
 
                 throw;

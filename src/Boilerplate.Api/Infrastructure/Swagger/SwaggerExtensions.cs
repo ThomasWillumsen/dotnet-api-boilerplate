@@ -10,13 +10,14 @@ public static class SwaggerExtensions
     /// </summary>
     public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
     {
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
             c.SupportNonNullableReferenceTypes();
 
             c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
             {
-                Title = "Boilerplate API",
+                Title = "Blep API",
                 Version = "v1"
             });
 
@@ -37,10 +38,10 @@ public static class SwaggerExtensions
             c.AddSecurityDefinition("Bearer", securitySchema);
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
-                    {
-                        securitySchema,
-                        new string[] {"Bearer"}
-                    }
+                {
+                    securitySchema,
+                    new string[] {"Bearer"}
+                }
             });
 
             // Set the comments path for the Swagger JSON and UI.

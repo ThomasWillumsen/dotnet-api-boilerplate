@@ -1,11 +1,11 @@
 using Boilerplate.Api.Infrastructure.Database.Entities;
 using Boilerplate.Api.Domain.Exceptions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Boilerplate.Api.Infrastructure.Database;
-using Microsoft.Data.SqlClient;
 using Boilerplate.Api.Infrastructure.ErrorHandling;
 using Boilerplate.Api.Domain.Commands.Emails;
+using MySqlConnector;
+using Microsoft.EntityFrameworkCore;
 
 namespace Boilerplate.Api.Domain.Commands.Accounts;
 
@@ -32,7 +32,7 @@ public static class CreateAccount
             var newAccount = new AccountEntity(request.FullName, request.Email);
             newAccount.ResetPasswordToken = Guid.NewGuid();
             newAccount.Claims.Add(new AccountClaimEntity(ClaimTypeEnum.User));
-            if(request.IsAdmin)
+            if (request.IsAdmin)
                 newAccount.Claims.Add(new AccountClaimEntity(ClaimTypeEnum.Admin));
 
             await _dbContext.Accounts.AddAsync(newAccount);
@@ -43,8 +43,8 @@ public static class CreateAccount
             }
             catch (DbUpdateException e)
             {
-                if (e.InnerException is SqlException sqlEx &&
-                    sqlEx.Number == 2601)
+                if (e.InnerException is MySqlException mysqlEx &&
+                    mysqlEx.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
                     throw new ConflictException(ErrorCodesEnum.ACCOUNT_EMAIL_ALREADY_EXIST);
 
                 throw;

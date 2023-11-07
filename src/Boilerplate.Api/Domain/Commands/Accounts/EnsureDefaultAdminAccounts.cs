@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Boilerplate.Api.Infrastructure.Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +9,7 @@ public static class EnsureDefaultAdminAccounts
 {
     public record Command() : IRequest;
 
-    public class Handler : AsyncRequestHandler<Command>
+    public class Handler : IRequestHandler<Command>
     {
         private readonly IMediator _mediator;
         private readonly AppDbContext _dbContext;
@@ -29,7 +25,7 @@ public static class EnsureDefaultAdminAccounts
             _appSettings = appSettings.Value;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var existingAccounts = await _dbContext.Accounts.Select(x => x.Email).ToListAsync();
             foreach (var defaultAcc in _appSettings.DefaultAdminAccounts)

@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Boilerplate.Api.Domain.Services;
 using MediatR;
 using Boilerplate.Api.Infrastructure.Database;
@@ -12,9 +9,9 @@ namespace Boilerplate.Api.Domain.Commands.Emails;
 
 public static class SendResetPasswordMail
 {
-    public record Command(string email, string fullName, Guid resetPasswordToken) : IRequest;
+    public record Command(string email, string fullName, Guid passwordToken) : IRequest;
 
-    public class Handler : MediatR.AsyncRequestHandler<Command>
+    public class Handler : IRequestHandler<Command>
     {
         private readonly AppDbContext _dbContext;
         private readonly SendGridSettings _sendgridSettings;
@@ -30,14 +27,15 @@ public static class SendResetPasswordMail
             _sendgridClient = sendgridClient;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var dto = new SendGridMailDto(
-                templateId: _sendgridSettings.ResetPasswordTemplateId,
+                templateId: _sendgridSettings.CreateNewPasswordTemplateId,
                 templateData: new
                 {
                     fullName = request.fullName,
-                    resetLink = $"https://someurl.com/{request.resetPasswordToken.ToString()}"
+                    createNewPasswordLink = _sendgridSettings.CreateNewPasswordLink
+                        .Replace("{passwordToken}", request.passwordToken.ToString())
                 },
                 Guid.NewGuid(),
                 from: new EmailAddress(_sendgridSettings.SendFromEmail, _sendgridSettings.SendFromName),
